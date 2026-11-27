@@ -659,7 +659,12 @@ body{font-family:"MiSans","MiSans VF","Mi Sans",system-ui,-apple-system,"Segoe U
 #advCv{position:absolute;left:0;top:0;display:block}
 .adv-hud{position:absolute;left:0;right:0;top:0;display:flex;align-items:flex-start;gap:10px;padding:10px max(14px,env(safe-area-inset-right)) 0 max(14px,env(safe-area-inset-left));pointer-events:none}
 #realMap{position:absolute;top:64px;left:max(14px,env(safe-area-inset-left));width:76px;height:76px;border-radius:50%;background:#152126e8;pointer-events:none;z-index:2}
-.adv-hud{z-index:5}
+.adv-hud{z-index:5;box-sizing:border-box;flex-wrap:wrap;align-items:center;gap:6px;padding-top:max(7px,env(safe-area-inset-top));padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
+.adv-hud .adv-stat{min-width:0;flex:1 1 190px;flex-wrap:wrap;gap:6px;margin:0;padding:6px 9px;max-width:none}.adv-hud .adv-stat>*{min-width:0}.adv-hud #advZone{overflow:hidden;text-overflow:ellipsis;max-width:100px}.adv-hud .adv-live{max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#advView.hud-compact .adv-hud{gap:5px}#advView.hud-compact .adv-hud .adv-stat{flex:1 0 100%;order:20;justify-content:center;box-sizing:border-box}#advView.hud-compact .adv-hud .adv-live{order:19}#advView.hud-compact .adv-hud .adv-b{width:42px;height:42px;flex:0 0 42px}#advView.hud-short .adv-hud .adv-stat{font-size:11px;padding-block:4px}
+#advView .adv-hud button{touch-action:manipulation}#advView #realMap{top:calc(var(--hud-bottom,56px) + 8px)}
+#advView.phone-open .adv-hud{z-index:41}#advView.phone-open .adv-hud>:not(#advPhB){pointer-events:none}#advView .ph-scrim[hidden]{display:none!important}
+#advView .ph,#advView.phone-compact .ph{top:calc(var(--hud-bottom,50px) + 5px);bottom:max(6px,env(safe-area-inset-bottom));right:max(8px,env(safe-area-inset-right));left:auto;width:min(350px,calc(100% - 16px))}#advView .ph-main{min-height:0;overscroll-behavior:contain}#advView .ph-grid{grid-template-columns:repeat(3,minmax(0,1fr))}#advView .ph-app span{overflow-wrap:anywhere;text-align:center}#npcDlg .nd-replay{border:1px solid #ffffff55;border-radius:9px;background:#ffffff22;color:#fff;padding:6px 9px;font-size:14px;min-height:34px}
 .adv-hud .adv-b{flex:0 0 44px;color:#fff;background:#18253be8;backdrop-filter:none}
 .adv-k svg{width:24px;height:24px;pointer-events:none}.adv-k.big svg{width:32px;height:32px}#advView.driving #advJ svg{display:none}
 .adv-hud .adv-b svg{width:23px;height:23px;pointer-events:none}
@@ -1256,7 +1261,7 @@ const say=(text,add)=>new Promise(res=>{const id='t'+(++N.seq);pend[id]=res;Chin
  setTimeout(()=>{if(pend[id]){delete pend[id];res()}},6000+String(text).length*110)});
 const tts={speak:t=>say(t,false),add:arr=>Promise.all((arr||[]).map(x=>say(x.text,true))),
  stop:()=>{ChinuNative.stopSpeak();Object.keys(pend).forEach(k=>{const f=pend[k];delete pend[k];f()})},onState:f=>ttsH.push(f)};
-try{const ss=window.speechSynthesis;if(ss){ss.speak=u=>{say(u.text,true).then(()=>{try{u.onend&&u.onend()}catch(e){}})};ss.cancel=()=>tts.stop()}}catch(e){}
+try{const ss=window.speechSynthesis;if(ss){window.__gameRawSpeech={speak:ss.speak.bind(ss),cancel:ss.cancel.bind(ss)};ss.speak=u=>{say(u.text,true).then(()=>{try{u.onend&&u.onend()}catch(e){}})};ss.cancel=()=>tts.stop()}}catch(e){}
 
 /* ---------- voice in (no beeps) ---------- */
 const dh={p:[],f:[],s:[]};
@@ -3406,7 +3411,7 @@ N.on('back',()=>{if($('#sheet').classList.contains('on')){closeSheet();return tr
   if(curTab!=='home'){goTab('home');return true}return false});
 N.on('upd',s=>{if(s==='ready')toast(T('updReady'),15000,()=>ChinuNative.reload());else if(s==='latest')toast(T('updLatest'));else if(s==='fail')toast(T('updFail'))});
 N.on('perms',()=>{INFO=N.refresh();if(curTab==='settings')renderSettings()});
-N.on('resume',()=>{INFO=N.refresh();N.drain();if(curTab==='settings')renderSettings()});
+N.on('resume',()=>{INFO=N.refresh();N.drain();if(curTab==='settings')renderSettings()});setInterval(()=>{if(curTab!=='settings'||document.hidden)return;const old=[INFO.acc,INFO.accEnabled,INFO.battery].join('|');INFO=N.refresh();if(old!==[INFO.acc,INFO.accEnabled,INFO.battery].join('|'))renderSettings()},3000);
 
 /* phone commands go to the phone's own brain (alarms, calls, WhatsApp, apps, songs, "Komal ko bolo …") */
 const PHONE=/(alarm|अलार्म|timer|टाइमर|remind|रिमाइंड|याद दिला|yaad dila|\bcall\b|कॉल|फ़ोन|फोन|\bphone\b|dial|whatsapp|whats app|व्हाट्सएप|व्हाट्सऐप|\bsms\b|message bhej|मैसेज|\bmsg\b|\bopen\b|खोल|khol|launch|chalao|चलाओ|chala do|bajao|बजाओ|\bplay\b|गाना|gaana|gana\b|\bsong|video|वीडियो|youtube|यूट्यूब|spotify|instagram|insta\b|snapchat|facebook|volume|वॉल्यूम|awaaz|आवाज़|brightness|ब्राइटनेस|wifi|wi-fi|वाईफाई|bluetooth|ब्लूटूथ|hotspot|mobile data|location|लोकेशन|screenshot|स्क्रीनशॉट|torch|flash|टॉर्च|फ्लैश|battery|बैटरी|\bdnd\b|do not disturb|silent|साइलेंट|vibrate|वाइब्रेट|navigate|rasta|रास्ता|direction|airplane|aeroplane|rotate|dark mode|next song|previous song|calculator)/i;
@@ -3483,7 +3488,7 @@ const _rsN=renderSettings;renderSettings=function(){_rsN();INFO=N.refresh();
   $$('#setBody [data-row]').forEach(b=>b.onclick=()=>rowTap(b.dataset.row));$$('#setBody [data-sw]').forEach(b=>b.onclick=()=>toggleSw(b.dataset.sw))};
 const _rtN=rowTap;rowTap=function(k){
   const map={np_auto:'autostart',np_mbat:'miui_battery',np_perms:'perms',np_acc:'accessibility',np_overlay:'overlay',np_battery:'battery',np_install:'install',np_classic:'classic'};
-  if(map[k]){ChinuNative.open(map[k]);return}
+  if(k==='np_acc'&&!INFO.acc){toast(INFO.accEnabled?'Accessibility enabled but service disconnected. Check battery restrictions or restart the service in Android settings.':'Enable Chinu Accessibility in Android settings. Android requires your approval.');}if(map[k]){ChinuNative.open(map[k]);return}
   if(k==='np_crash'){const t=crashTxt();openSheet(`<h3>🐞 ${T('pCrash')}</h3><p class="sub">${T('pCrashSub')}</p><pre style="white-space:pre-wrap;font-size:11px;max-height:45vh;overflow:auto;background:rgba(0,0,0,.3);padding:10px;border-radius:12px">${esc(t)}</pre><div class="row"><button class="btn glass press" style="flex:1" id="crClr">🗑</button><button class="btn solid press" style="flex:2" id="crCp">📋 Copy</button></div>`);
     $('#crCp').onclick=async()=>{try{await navigator.clipboard.writeText(t);toast('✓')}catch(e){const r=document.createRange();r.selectNodeContents($('#sheetBody pre'));getSelection().removeAllRanges();getSelection().addRange(r);document.execCommand('copy');toast('✓')}};
     $('#crClr').onclick=()=>{ChinuNative.clearCrash();closeSheet();renderSettings()};return}
@@ -4840,21 +4845,13 @@ function drawSprites(VP,V,cam,sk,fogD,heads){const gl=GL7.gl,st=G7,A=GL7.A,D=GL7
   gl.depthMask(true);gl.disable(gl.BLEND)}
 const LVP_ON=()=>!!(QUAL().sh&&GL7.shOK);
 /* ---------- loop, input, screens ---------- */
-function advLoop(ts){if(!ADV.on)return;ADV.raf=requestAnimationFrame(advLoop);if(document.hidden){ADV.last=ADV.nextFrame=0;return}if(!ADV.last)ADV.last=ts;let dt=Math.min(.1,(ts-ADV.last)/1000);
-  const interval=1000/(ADV.cap30?30:LS.get('real_fps',60));
-  if(ADV.nextFrame&&ts+.8<ADV.nextFrame)return;
-  ADV.nextFrame=ADV.nextFrame&&ts-ADV.nextFrame<interval?ADV.nextFrame+interval:ts+interval;
-  ADV.last=ts;
-  if(!ADV.menu&&!document.hidden){ADV.acc=(ADV.acc||0)+dt;let k=0;while(ADV.acc>=1/60&&k<5){advStep(1/60);ADV.acc-=1/60;k++}if(k===5)ADV.acc=0;if(TRIP&&!G7.act)tripTick(dt)}
-  if(liveOn())liveTick();
-  if(ADV.faceDirty){ADV.faceDirty=false;WHO.forEach(faceTex)}
-  const t0=performance.now();try{render();if(PH.open)phFrame()}catch(e){console.warn(e)}perfWatch(dt)}
-function perfWatch(dt){const p=ADV.perf||(ADV.perf={n:0,sum:0,t:0,bad:0,good:0});p.n++;p.sum+=dt;p.t+=dt;if(p.t<2.5)return;const avg=p.sum/p.n*1000;ADV.fps=Math.round(1000/avg);p.n=0;p.sum=0;p.t=0;
-  if(LS.get('adv_gfx','auto')!=='auto')return;
-  if(avg>(ADV.cap30?36:22)){p.bad++;p.good=0;if(p.bad>=2){p.bad=0;if(ADV.tier>0){ADV.tier--;advFit()}else if((ADV.scaleMul||1)>.91){ADV.scaleMul=Math.max(.9,(ADV.scaleMul||1)-.08);advFit()}else if(PFX.on&&!PFX.autoOff){PFX.autoOff=true;PFX.on=false}else ADV.cap30=true}}
-  else if(avg<15){p.good++;p.bad=0;if(p.good>=4&&ADV.cap30){ADV.cap30=false;p.good=0}}else{p.bad=0}}
-function advFit(){const v=$('#advView');if(!v)return;const W=innerWidth,H=innerHeight,rot=H>W*1.05;v.classList.toggle('rot',rot);const w=rot?H:W,h=rot?W:H;v.classList.toggle('phone-compact',h<430||w<650);v.classList.toggle('compact',w<680);v.style.width=w+'px';v.style.height=h+'px';
-  const cv=$('#advCv');const q=QUAL();const dpr=Math.max(1,Math.min(devicePixelRatio||1,q.scale)*(ADV.scaleMul||1))*Number(LS.get('real_scale',1));cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);cv.style.width=w+'px';cv.style.height=h+'px'}
+function gameTargetFps(){const f=Number(LS.get('real_fps',60));return [30,60,90].includes(f)?f:60}
+function applyGameFps(){ADV.nextFrame=0;ADV.last=0;ADV.acc=0;ADV.perf=null;ADV.fps=0;try{if(window.ChinuNative&&typeof ChinuNative.setGameFps==='function')ChinuNative.setGameFps(gameTargetFps())}catch(e){}}
+function advLoop(ts){if(!ADV.on)return;ADV.raf=requestAnimationFrame(advLoop);if(document.hidden){ADV.last=ADV.nextFrame=ADV.acc=0;ADV.perf=null;return}const interval=1000/gameTargetFps();if(ADV.nextFrame&&ts+.8<ADV.nextFrame)return;ADV.nextFrame=ADV.nextFrame&&ts-ADV.nextFrame<interval?ADV.nextFrame+interval:ts+interval;const dt=ADV.last?Math.min(.1,Math.max(0,(ts-ADV.last)/1000)):0;ADV.last=ts;if(!ADV.menu){ADV.acc=(ADV.acc||0)+dt;let k=0;while(ADV.acc>=1/60&&k<6){advStep(1/60);ADV.acc-=1/60;k++}if(k===6)ADV.acc=0;if(TRIP&&!G7.act)tripTick(dt)}if(liveOn())liveTick();if(ADV.faceDirty){ADV.faceDirty=false;WHO.forEach(faceTex)}try{render();if(PH.open)phFrame();perfWatch(ts)}catch(e){console.warn(e)}}
+function perfWatch(ts){const p=ADV.perf||(ADV.perf={n:0,at:ts});p.n++;const elapsed=ts-p.at;if(elapsed>=1500){ADV.fps=Math.round(Math.max(0,p.n-1)*1000/elapsed);p.n=1;p.at=ts}}
+function advHudFit(){const v=$('#advView'),hud=v&&v.querySelector('.adv-hud');if(!hud||!ADV.on)return;v.style.setProperty('--hud-bottom',Math.ceil(hud.offsetTop+hud.offsetHeight)+'px')}
+function advFit(){const v=$('#advView');if(!v)return;const vv=window.visualViewport,editing=!!document.activeElement?.closest('#advPhone input,#advPhone textarea');const use=vv&&!editing&&Math.abs(vv.scale-1)<.01;const W=Math.max(1,Math.floor(use?vv.width:innerWidth)),H=Math.max(1,Math.floor(use?vv.height:innerHeight)),rot=H>W*1.05,w=rot?H:W,h=rot?W:H;v.classList.toggle('rot',rot);v.classList.toggle('phone-compact',h<430||w<650);v.classList.toggle('compact',w<680);v.classList.toggle('hud-compact',w<900);v.classList.toggle('hud-short',h<480);v.style.left=(use?vv.offsetLeft:0)+'px';v.style.top=(use?vv.offsetTop:0)+'px';v.style.width=w+'px';v.style.height=h+'px';v.style.transform=rot?'translateX('+W+'px) rotate(90deg)':'none';const cv=$('#advCv'),q=QUAL(),dpr=Math.max(1,Math.min(devicePixelRatio||1,q.scale)*(ADV.scaleMul||1))*Number(LS.get('real_scale',1));const cw=Math.round(w*dpr),ch=Math.round(h*dpr);if(cv.width!==cw)cv.width=cw;if(cv.height!==ch)cv.height=ch;cv.style.width=w+'px';cv.style.height=h+'px';advHudFit()}
+(function(){const hud=$('#advView .adv-hud');if(hud&&typeof ResizeObserver!=='undefined'){const obs=new ResizeObserver(advHudFit);obs.observe(hud)}let fitTimer;const fit=()=>{if(ADV.on){clearTimeout(fitTimer);fitTimer=setTimeout(()=>{if(ADV.on)advFit()},80)}};window.visualViewport?.addEventListener('resize',fit);window.addEventListener('orientationchange',fit)})();
 function advMenu(html){const m=$('#advMenu');ADV.menu=html?1:null;m.classList.toggle('on',!!html);m.innerHTML=html?`<div class="box">${html}</div>`:'';if(AU.ctx){try{html?AU.ctx.suspend():AU.ctx.resume()}catch(e){}}}
 function optRow(key,opts,cur){return `<div class="adv-opt">${opts.map(([v,l])=>`<button class="chip press ${cur===v?'on':''}" data-o="${key}" data-v="${v}">${T(l)}</button>`).join('')}</div>`}
 const TIME_O=[['trip','tTrip'],['real','tReal'],['dawn','tDawn'],['day','tDay'],['sunset','tSun'],['night','tNight']],WX_O=[['real','wReal'],['snow','wSnow'],['clear','wClear'],['storm','wStorm']],CAM_O=[['far','cFar'],['near','cNear'],['pov','cPov']];
@@ -4864,7 +4861,7 @@ function pauseMenu(){const g=LS.get('adv_gfx','auto');advMenu(`<h2>⏸ ${T('advP
   <div class="label" style="margin-top:12px">${T('advTime')}</div>${optRow('time',TIME_O,ADV.opt.time)}<div class="label">${T('advWx')}</div>${optRow('wx',WX_O,ADV.opt.wx)}<div class="label">${T('advCamT')}</div>${optRow('cam',CAM_O,ADV.opt.cam)}
   <div class="label">⚙️ ${T('tGfx')}${ADV.fps?` · ${ADV.fps} FPS`:''}</div><div class="adv-opt">${[['auto','Auto'],['smooth','⚡ Smooth'],['balanced','Balanced'],['best','HD'],['hdr','HDR'],['ultra','Ultra HD']].map(([v,l])=>`<button class="chip press ${g===v?'on':''}" data-gfx="${v}">${l}</button>`).join('')}</div><div class="adv-opt"><button class="chip press ${PFX.on?'on':''}" id="pmPfx">🎬 Cinematic FX</button><button class="chip press ${NV.on?'on':''}" id="pmNv">🗣️ NPC voice</button></div>
   <div style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 0">
-  <label>FPS <select id="realFps"><option>30</option><option>60</option></select></label>
+  <label>Frame rate <select id="realFps"><option value="30">30 FPS · Battery Saver</option><option value="60">60 FPS · Standard</option><option value="90">90 FPS · High Performance</option></select></label>
   <label>Resolution <select id="realScale"><option value=".65">65%</option><option value=".8">80%</option><option value="1">100%</option></select></label>
   <label>Distance <select id="realDistance"><option value="140">Near</option><option value="250">Medium</option><option value="400">Far</option></select></label>
   <label><input type="checkbox" id="realShadows"> Shadows</label>
@@ -4872,8 +4869,8 @@ function pauseMenu(){const g=LS.get('adv_gfx','auto');advMenu(`<h2>⏸ ${T('advP
   <label>Camera zoom <input id="realZoom" type="range" min=".65" max="1.6" step=".05"></label>
   </div><div class="row"><button class="btn glass press" id="amCp">${T('advRespawn')}</button><button class="btn glass press" id="amSnd">${T('advSound')} ${ADV.snd?'✓':'✕'}</button></div><button class="btn glass full press" id="amEx">${T('advExit')}</button><p style="margin-top:12px;font-size:12px">${T('advHow')}</p>`);
   for(const [id,key,initial] of [['Fps','fps',60],['Scale','scale',1],['Distance','distance',250],['Sensitivity','sensitivity',1],['Zoom','zoom',1]]){
-    const input=$('#real'+id);input.value=LS.get('real_'+key,initial);
-    input.oninput=()=>{LS.set('real_'+key,Number(input.value));if(key==='scale')advFit();if(key==='fps'){ADV.cap30=false;ADV.nextFrame=0}};
+    const input=$('#real'+id);input.value=key==='fps'?gameTargetFps():LS.get('real_'+key,initial);
+    input.oninput=()=>{LS.set('real_'+key,Number(input.value));if(key==='scale')advFit();if(key==='fps'){applyGameFps()}};
   }
   $('#realShadows').checked=LS.get('real_shadows',true);
   $('#realShadows').onchange=e=>LS.set('real_shadows',e.target.checked);
@@ -4900,10 +4897,10 @@ function showFinish(){const st=G7,img=ADV.lastPost||postcard(PLACE.end.name);con
   $('#amMap').onclick=()=>openMap(true);$('#amStay').onclick=()=>{advMenu(null);const me=G7.ch[myId()];const p=pathAt(ENDS-10);me.x=p.x;me.z=p.z;me.y=terrainH(p.x,p.z);me.i=null;seedTrail();ADV.camSnap=true}}
 function advOpen(cpIdx,opts){const v=$('#advView');if(!v)return;closeSheet();opts=opts||{};
   try{if(window.ChinuNative&&ChinuNative.setLandscape)ChinuNative.setLandscape(true)}catch(e){}
-  ADV.on=true;v.classList.add('on');v.classList.toggle('live',liveOn()||!!opts.live);advFit();advMenu(null);wxFetch();auInit();try{AU.ctx&&AU.ctx.resume()}catch(e){}
+  ADV.on=true;v.classList.add('on');v.classList.toggle('live',liveOn()||!!opts.live);applyGameFps();advFit();advMenu(null);wxFetch();auInit();try{AU.ctx&&AU.ctx.resume()}catch(e){}
   if(!TRIP)tripLoad();const pid=opts.place||TRIP.place;
   loadPlace(pid,()=>{newGame(0);const ps=opts.fresh?null:TRIP.pos&&TRIP.pos.place===pid?TRIP.pos:null;if(ps)restorePos(ps);
-    ADV.last=0;ADV.cam=null;cancelAnimationFrame(ADV.raf);ADV.raf=requestAnimationFrame(advLoop);dailyBonus();
+    ADV.last=ADV.nextFrame=ADV.acc=0;ADV.perf=null;ADV.cam=null;cancelAnimationFrame(ADV.raf);ADV.raf=requestAnimationFrame(advLoop);dailyBonus();
     if(!LS.get('adv_tut2',false)){LS.set('adv_tut2',true);setTimeout(()=>advBanner(T('advHow'),6500),3400)}
     setTimeout(()=>{if(G7&&!liveOn()&&!ps)sayPair('start')},1800);if(opts.after)opts.after()})}
 function loadPlace(pid,done){const v=$('#advLoad');const pl=PLACES[pid]||PLACES.manali;pl.id=pid in PLACES?pid:'manali';$('#advLoadT').textContent=pl.name;v.style.display='flex';
@@ -4912,7 +4909,7 @@ function loadPlace(pid,done){const v=$('#advLoad');const pl=PLACES[pid]||PLACES.
       if(TRIP){TRIP.place=pl.id;TRIP.visited[pl.id]=1;(TRIP.taken[pl.id]||[]).forEach(i=>{if(W7.items[i])W7.items[i].t=true});restoreRent()}
       v.style.display='none';done&&done()}catch(e){console.warn(e);advClose();toast(T('advNoGL'))}},80)}
 function advClose(){realEnd(true);if(G7&&TRIP)tripSave(true);ADV.on=false;cancelAnimationFrame(ADV.raf);advMenu(null);const v=$('#advView');if(v)v.classList.remove('on','rot','live');try{AU.ctx&&AU.ctx.suspend()}catch(e){}
-  try{if(window.ChinuNative&&ChinuNative.setLandscape)ChinuNative.setLandscape(false)}catch(e){}
+  try{npcHush();if(window.ChinuNative&&ChinuNative.setGameFps)ChinuNative.setGameFps(0);if(window.ChinuNative&&ChinuNative.setLandscape)ChinuNative.setLandscape(false)}catch(e){}
   try{advLiveStop(true)}catch(e){}$$('.adv-bub').forEach(b=>b.classList.remove('on'));const m=$('#advMap');if(m)m.classList.remove('on')}
 function advSwap(){const st=G7;if(liveOn())return;st.hand=false;st.lead=other7();seedTrail();haptic(15);advBanner(T('advNow',{n:EM[st.lead]+' '+NAME(st.lead)}),1400)}
 function advHand(){if(window.ChinuRealistic){realRequest('hand');return}const st=G7,L=st.ch[st.lead],F=st.ch[other7()];if(st.hand){st.hand=false;if(!liveOn())seedTrail();else liveSend({e:'hand',on:false});return}
@@ -5341,7 +5338,7 @@ drawVeh=function(draw,v){
 drawCabin=function(draw,a){if(!a||!a.g)return;const B=M4.ch(M4.T(a.g.x,a.g.y,a.g.z),M4.Ry(a.g.yaw),M4.Rz(Math.sin(a.t*1.3)*.025));vmDraw(draw,vmGet('cabin'),B,C7('#c8202c'),!!(ADV.sky&&ADV.sky.night>.5))};
 /* ================= 📱 in-game phone: ChinuSnap camera, Chinugram feed, map, wallet, radio, chat ================= */
 Object.assign(STR,{
- phSnap:TR3('ChinuSnap','ChinuSnap','ChinuSnap'),phGram:TR3('Chinugram','Chinugram','Chinugram'),phMap:TR3('Map','Map','मैप'),phWallet:TR3('Wallet','Wallet','वॉलेट'),phRadio:TR3('Radio','Radio','रेडियो'),phChat:TR3('Chat','Chat','चैट'),
+ phSnap:TR3('ChinuSnap','ChinuSnap','ChinuSnap'),phGram:TR3('Chinugram','Chinugram','Chinugram'),phMap:TR3('Map','Map','मैप'),phWallet:TR3('Wallet','Wallet','वॉलेट'),phUpi:TR3('ChinuPay','ChinuPay','चीनूपे'),phRadio:TR3('Radio','Radio','रेडियो'),phChat:TR3('Chat','Chat','चैट'),
  phSelfie:TR3('Selfie','Selfie','सेल्फी'),phBack:TR3('Back cam','Peeche wala','पीछे वाला'),phSend:TR3('💌 Send as snap','💌 Snap bhejo','💌 Snap भेजो'),phPost:TR3('🌄 Post on Chinugram','🌄 Chinugram pe post','🌄 Chinugram पे पोस्ट'),
  phSave:TR3('🖼️ Save to album','🖼️ Album mein save','🖼️ एल्बम में सेव'),phInsta:TR3('📤 Share to Instagram…','📤 Instagram pe share…','📤 Instagram पे शेयर…'),phRetake:TR3('↺ Retake','↺ Dobara','↺ दोबारा'),
  phCap:TR3('Write a caption…','Caption likho…','कैप्शन लिखो…'),phPosted:TR3('Posted on Chinugram 🌄','Chinugram pe post ho gaya 🌄','Chinugram पे पोस्ट हो गया 🌄'),phSent:TR3('Snap sent 💌','Snap chala gaya 💌','Snap चला गया 💌'),
@@ -5361,19 +5358,11 @@ const PH_TRACKS=[
   ['A Road for Two','Warm acoustic instrumental','a-road-for-two'],
   ['Snowlight Waltz','Piano waltz','snowlight-waltz']
 ];
-const PH_ONLINE=[
-  ['Saiyaara','Faheem Abdullah · YRF Music','jCVjudmnByk'],
-  ['Barbaad','Jubin Nautiyal · YRF Music','B4LDG_1MnL8',343],
-  ['Tum Ho Toh','Vishal Mishra & Hansika Pareek · YRF Music','rOUuGvJkBrQ'],
-  ['Humsafar','Sachet–Parampara · YRF Music','D9DiMnlpFK8'],
-  ['Dhun','Arijit Singh · YRF Music','cUmUOb7j3dc'],
-  ['Gehra Hua','Arijit Singh · Saregama','GX9x62kFsVU'],
-  ['Mere Hamraaz','Ekram Pradhan · Epriix Music','7OP7ScUi-28']
-];
+const PH_ONLINE=[['Saiyaara','Faheem Abdullah · YRF Music'],['Barbaad','Jubin Nautiyal · YRF Music'],['Tum Ho Toh','Vishal Mishra & Hansika Pareek · YRF Music'],['Humsafar','Sachet–Parampara · YRF Music'],['Dhun','Arijit Singh · YRF Music'],['Gehra Hua','Arijit Singh · Saregama'],['Mere Hamraaz','Ekram Pradhan · Epriix Music']];
 const PH_TEXT={
  phone:TR3('Phone','Phone','फ़ोन'),back:TR3('Back','Back','वापस'),close:TR3('Close','Band karo','बंद करें'),
  offline:TR3('Offline love instrumentals','Offline love instrumentals','ऑफ़लाइन रोमांटिक धुनें'),
- online:TR3('Official songs · YouTube','Official songs · YouTube','आधिकारिक गाने · YouTube'),
+ online:TR3('My songs · Add audio','My songs · Add audio','मेरे गाने · ऑडियो जोड़ें'),
  stations:TR3('Instrumental stations','Instrumental stations','इंस्ट्रूमेंटल स्टेशन'),
  loading:TR3('Loading…','Loading…','लोड हो रहा है…'),playing:TR3('Playing','Chal raha hai','चल रहा है'),
  paused:TR3('Paused','Ruka hua hai','रुका हुआ है'),error:TR3('Could not play. Tap Play to retry.','Dubara Play dabao.','गाना नहीं चला। फिर से प्ले दबाएँ।'),
@@ -5386,14 +5375,14 @@ function phRadioPaint(){
   if(!PH.open||PH.scr!=='radio')return;
   const text=$('#phRadioStatus'),toggle=$('#phPlay');
   if(!text||!toggle)return;
-  $('#phNow').textContent=PH_TRACKS[PH.track][0];
-  text.textContent=phRadio.state==='idle'?PH_TRACKS[PH.track][1]:phText(phRadio.state);
+  $('#phNow').textContent=phLocalActive>=0?PH_ONLINE[phLocalActive][0]:PH_TRACKS[PH.track][0];
+  text.textContent=phRadio.state==='idle'?PH_TRACKS[PH.track][1]:phText(phRadio.state);const bar=$('#phProgress');if(bar)bar.value=phLocalActive>=0&&Number.isFinite(phLocalAudio.duration)&&phLocalAudio.duration>0?phLocalAudio.currentTime/phLocalAudio.duration:0;phLocalStatus();
   toggle.textContent=phText(phRadio.state==='playing'||phRadio.state==='loading'?'pause':'play');
   $$('#advPhone [data-track]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.track===PH.track&&PH.radio<0)));
   $$('#advPhone [data-st]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.st===PH.radio&&PH.radio>=0)));
 }
 function phRadioStop(reset=true){
-  ++phRadio.ticket;
+  ++phRadio.ticket;phLocalStop(reset);
   if(phRadio.source){
     if(!reset)phRadio.offset+=AU.ctx.currentTime-phRadio.start;
     phRadio.source.onended=null;phRadio.source.stop();phRadio.source.disconnect();phRadio.volume?.disconnect();phRadio.source=null;
@@ -5434,10 +5423,19 @@ async function phPlayTrack(i,resume=false){
     phRadioStop(false);phRadio.state='error';phRadioPaint();
   }
 }
-function phOpenOfficial(event){
-  phRadioStop();PH.radio=-1;phRadioPaint();
-  if(window.ChinuNative?.openUrl){event.preventDefault();ChinuNative.openUrl(event.currentTarget.href)}
-}
+const phLocalAudio=new Audio();phLocalAudio.preload='metadata';phLocalAudio.playsInline=true;phLocalAudio.volume=.65;
+const phLocalFiles=new Map();let phLocalUrl=null,phLocalActive=-1;
+function phLocalDb(){return new Promise((ok,no)=>{const req=indexedDB.open('chinu-radio-local-v1',1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('tracks'))req.result.createObjectStore('tracks')};req.onsuccess=()=>ok(req.result);req.onerror=()=>no(req.error)})}
+async function phLocalRead(i){if(phLocalFiles.has(i))return phLocalFiles.get(i);try{const db=await phLocalDb();try{const file=await new Promise((ok,no)=>{const q=db.transaction('tracks').objectStore('tracks').get(i);q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)});if(file)phLocalFiles.set(i,file);return file}finally{db.close()}}catch(e){return null}}
+async function phLocalSave(i,file){phLocalFiles.set(i,file);try{const db=await phLocalDb();try{await new Promise((ok,no)=>{const tx=db.transaction('tracks','readwrite');tx.objectStore('tracks').put(file,i);tx.oncomplete=ok;tx.onerror=no;tx.onabort=no})}finally{db.close()}}catch(e){toast('Audio available this session; storage could not save it')}}
+function phLocalStop(reset=true){phLocalAudio.pause();if(reset){phLocalAudio.removeAttribute('src');phLocalAudio.load();if(phLocalUrl)URL.revokeObjectURL(phLocalUrl);phLocalUrl=null;phLocalActive=-1}}
+function phLocalStatus(){if(!PH.open||PH.scr!=='radio')return;$$('#advPhone [data-local]').forEach(b=>{const i=+b.dataset.local;b.setAttribute('aria-pressed',String(i===phLocalActive));const flag=b.querySelector('small:last-child');if(flag)flag.textContent=phLocalFiles.has(i)?'▶':'Add audio'})}
+async function phLocalRefresh(){await Promise.all(PH_ONLINE.map((_,i)=>phLocalRead(i)));phLocalStatus()}
+async function phLocalPlay(i){phRadioStop();PH.radio=-1;const ticket=phRadio.ticket;const file=await phLocalRead(i);if(ticket!==phRadio.ticket||!ADV.on)return;if(!file){toast('Use Add audio beside this song first');phLocalStatus();return}phLocalActive=i;phLocalUrl=URL.createObjectURL(file);phLocalAudio.src=phLocalUrl;PH.radioPlaying=true;phRadio.state='loading';phRadioPaint();try{await phLocalAudio.play();if(ticket===phRadio.ticket){phRadio.state='playing';phRadioPaint()}}catch(e){if(ticket===phRadio.ticket){phRadio.state='error';PH.radioPlaying=false;phRadioPaint()}}}
+function phLocalSkip(delta){for(let k=1;k<=PH_ONLINE.length;k++){const i=(phLocalActive+delta*k+PH_ONLINE.length*2)%PH_ONLINE.length;if(phLocalFiles.has(i))return phLocalPlay(i)}phRadioStop()}
+phLocalAudio.onended=()=>{if(ADV.on&&phLocalActive>=0)phLocalSkip(1);else phRadioStop()};
+phLocalAudio.ontimeupdate=()=>{const bar=$('#phProgress');if(bar&&phLocalActive>=0)bar.value=Number.isFinite(phLocalAudio.duration)&&phLocalAudio.duration>0?phLocalAudio.currentTime/phLocalAudio.duration:0};
+phLocalAudio.onerror=()=>{if(phLocalActive>=0){PH.radioPlaying=false;phRadio.state='error';phRadioPaint()}};
 if(!COL.gram)COL.gram=[];
 /* spend log for the wallet */
 (function(){const _sp=spend;spend=function(n,what){const ok=_sp(n,what);if(ok&&TRIP&&n>0){(TRIP.log=TRIP.log||[]).unshift({n,w:String(what||'💸'),d:TRIP.day,p:PLACE?PLACE.name:'',ts:Date.now()});TRIP.log=TRIP.log.slice(0,40)}return ok}})();
@@ -5448,7 +5446,7 @@ function phTime(){return TRIP?clockTxt():new Date().toLocaleTimeString([],{hour:
 function phOpen(scr){PH.open=true;G7.joy=[0,0];G7.keys={};$('#advView').classList.add('phone-open');sfx('pop');haptic(10);const e=phEl();e.classList.add('on');$('#phScrim').hidden=false;phGo(scr||'home')}
 function phClose(){PH.open=false;ADV.camOv=null;$('#advView').classList.remove('phone-open');const scrim=$('#phScrim');if(scrim)scrim.hidden=true;const e=$('#advPhone');if(e)e.classList.remove('on');const me=G7&&G7.ch[myId()];if(me&&me.pose&&me.pose.k==='selfie')me.pose=null}
 function phGo(scr){PH.scr=scr;if(scr!=='snap')ADV.camOv=null;const e=phEl();
-  if(scr==='home'){const apps=[['snap','📸','phSnap','#ffd400'],['gram','🌄','phGram','linear-gradient(135deg,#f9c74f,#f3722c,#b5179e,#7209b7)'],['map','🗺️','phMap','#2a9d8f'],['wallet','💳','phWallet','#264653'],['radio','📻','phRadio','#e76f51'],['chat','💬','phChat','#4361ee']];
+  if(scr==='home'){const apps=[['snap','📸','phSnap','#ffd400'],['gram','🌄','phGram','linear-gradient(135deg,#f9c74f,#f3722c,#b5179e,#7209b7)'],['map','🗺️','phMap','#2a9d8f'],['wallet','💳','phWallet','#264653'],['upi','₹','phUpi','#167d50'],['radio','📻','phRadio','#e76f51'],['chat','💬','phChat','#4361ee']];
     e.innerHTML=`<div class="ph-wall"><div class="ph-av">${phAv('Cheeku',40)}${phAv('Komal',40)}</div><div class="ph-big">${phTime()}</div><div class="ph-sub">${PLACE?PLACE.name:''} · ${ADV.wx&&ADV.wx.temp!=null?ADV.wx.temp+'°C':''}</div></div>
      <div class="ph-grid">${apps.map(a=>`<button class="ph-app press" data-ph="${a[0]}"><i style="background:${a[3]}">${a[1]}</i><span>${T(a[2])}</span></button>`).join('')}</div>`}
   else if(scr==='snap'){e.innerHTML=`<div class="ph-cam"><canvas id="phV" width="270" height="338"></canvas><div class="ph-camtop"><b>${T('phSnap')}</b><button class="ph-flip press" id="phFlip">🔄 ${PH.sf?T('phBack'):T('phSelfie')}</button></div>
@@ -5468,11 +5466,12 @@ function phGo(scr){PH.scr=scr;if(scr!=='snap')ADV.camOv=null;const e=phEl();
   else if(scr==='wallet'){const log=(TRIP&&TRIP.log)||[];const tot=log.reduce((s,x)=>s+x.n,0);
     e.innerHTML=`<div class="ph-card"><small>${T('phBal')}</small><b>${rupee(TRIP?TRIP.money:0)}</b><small>${T('phToday')}: ${rupee(tot)} · Day ${TRIP?TRIP.day:1}</small></div>
      <div class="ph-log">${log.length?log.map(x=>`<div><span>${esc(x.w)}</span><small>Day ${x.d} · ${esc(x.p||'')}</small><b>−${rupee(x.n)}</b></div>`).join(''):`<div class="ph-empty">${T('phNoLog')}</div>`}</div>`}
+  else if(scr==='upi'){const log=((TRIP&&TRIP.log)||[]).filter(x=>String(x.w).startsWith('📱 '));const nearby=typeof NPCS!=='undefined'?NPCS.list.filter(n=>!n.far&&n.dm<7&&(n.inside||null)===(ADV.inside?.id||null)).slice(0,4):[];e.innerHTML=`<div class="ph-card"><small>ChinuPay · Game money only</small><b>${rupee(TRIP?TRIP.money:0)}</b><small>No real banking or real UPI PIN.</small></div><div class="ph-log"><b>Virtual payments</b>${nearby.map((n,i)=>`<button class="ph-st press" data-tip="${i}">₹ 50 tip · ${esc(n.name||'NPC')}</button>`).join('')}${log.length?log.map(x=>`<div><span>${esc(x.w)}</span><small>Day ${x.d}</small><b>−${rupee(x.n)}</b></div>`).join(''):'<div class="ph-empty">No virtual payments yet. Use ChinuPay at game shops and hotels.</div>'}</div>`;$$('#advPhone [data-tip]').forEach(b=>b.onclick=()=>{const n=nearby[+b.dataset.tip];if(!n)return;phClose();virtualPay(50,n.name||'NPC',()=>phOpen('upi'))})}
   else if(scr==='radio'){
-    e.innerHTML=`<div class="ph-player"><strong id="phNow"></strong><small id="phRadioStatus" aria-live="polite"></small>
+    e.innerHTML=`<div class="ph-player"><strong id="phNow"></strong><small id="phRadioStatus" aria-live="polite"></small><progress id="phProgress" value="0" max="1" aria-label="Track progress" style="width:100%;height:6px;accent-color:#f6a3d0"></progress>
       <div class="ph-transport"><button id="phPrev" aria-label="${phText('previous')}">‹</button><button id="phPlay" type="button">${phText('play')}</button><button id="phNext" aria-label="${phText('next')}">›</button></div></div>
       <div class="ph-radio-list"><h4>${phText('offline')}</h4>${PH_TRACKS.map(([title],i)=>`<button class="ph-st" data-track="${i}">${title}<small>▶</small></button>`).join('')}
-      <h4>${phText('online')}</h4>${PH_ONLINE.map(([title,credit,id,start])=>`<a class="ph-st" data-official href="https://www.youtube.com/watch?v=${id}${start?'&amp;t='+start+'s':''}" target="_blank" rel="noopener noreferrer"><span>${title}<br><small>${credit}</small></span><small>↗</small></a>`).join('')}
+      <h4>${phText('online')}</h4>${PH_ONLINE.map(([title,credit],i)=>`<div style="display:flex;align-items:center;gap:6px"><button class="ph-st" style="flex:1;min-width:0" data-local="${i}"><span>${title}<br><small>${credit}</small></span><small>Add audio</small></button><button class="ph-nav" type="button" data-choose="${i}" aria-label="Add or replace audio for ${title}">＋</button><input hidden type="file" accept="audio/*,.mp3,.ogg,.m4a,.wav" id="phImport${i}" data-import="${i}"></div>`).join('')}<small>Add your authorized audio once per song. Nothing is uploaded. Playback stays in the game.</small>
       <h4>${phText('stations')}</h4>${RADIO.map((r,i)=>`<button class="ph-st" data-st="${i}">${r[0]}</button>`).join('')}<button class="ph-st" data-st="-1">${T('phOff')}</button></div>`;
   }
   else if(scr==='chat'){const lines=phPick(TR3(['Chalo chai peete hain ☕','Selfie lete hain? 📸','Love you 💗','Race karein? 🏁','Thand lag rahi hai 🥶','Wow kya view hai 😍'],['Chalo chai peete hain ☕','Selfie lete hain? 📸','Love you 💗','Race karein? 🏁','Thand lag rahi hai 🥶','Wow kya view hai 😍'],['चलो चाय पीते हैं ☕','सेल्फी लेते हैं? 📸','लव यू 💗','रेस करें? 🏁','ठंड लग रही है 🥶','वाह क्या व्यू है 😍']));
@@ -5483,15 +5482,15 @@ function phGo(scr){PH.scr=scr;if(scr!=='snap')ADV.camOv=null;const e=phEl();
   const main=document.createElement('div');main.className='ph-main'+(scr==='snap'?' ph-camera':'');
   while(e.firstChild)main.appendChild(e.firstChild);
   const header=document.createElement('div');header.className='ph-title';
-  const title={snap:'phSnap',gram:'phGram',wallet:'phWallet',radio:'phRadio',chat:'phChat',shot:'phSnap'}[scr];
+  const title={snap:'phSnap',gram:'phGram',wallet:'phWallet',upi:'phUpi',radio:'phRadio',chat:'phChat',shot:'phSnap'}[scr];
   header.innerHTML=`<button class="ph-nav" aria-label="${phText('back')}" data-ph="${scr==='shot'?'snap':scr==='home'?'close':'home'}">‹</button><div class="ph-title-label"><b>${scr==='chat'?esc(NAME(pId(myId()))):title?T(title):phText('phone')}</b>${scr==='gram'?'<button class="ph-nav ph-camera-link" data-ph="snap" aria-label="Open camera">📸</button>':''}</div><button class="ph-nav" aria-label="${phText('close')}" data-ph="close">×</button>`;
   e.append(header,main);
   $$('#advPhone [data-ph]').forEach(b=>b.onclick=()=>phGo(b.dataset.ph));
   if(scr==='radio'){
-    $('#phPlay').onclick=()=>phRadio.state==='playing'||phRadio.state==='loading'?phRadioStop(false):phPlayTrack(PH.track,true);
-    $('#phPrev').onclick=()=>phPlayTrack(PH.track-1);$('#phNext').onclick=()=>phPlayTrack(PH.track+1);
+    $('#phPlay').onclick=()=>{if(phRadio.state==='playing'||phRadio.state==='loading')return phRadioStop(false);if(phLocalActive>=0){const ticket=phRadio.ticket;phLocalAudio.play().then(()=>{if(ticket!==phRadio.ticket)return;phRadio.state='playing';PH.radioPlaying=true;phRadioPaint()}).catch(()=>{if(ticket!==phRadio.ticket)return;phRadio.state='error';phRadioPaint()});return}phPlayTrack(PH.track,true)};
+    $('#phPrev').onclick=()=>phLocalActive>=0?phLocalSkip(-1):phPlayTrack(PH.track-1);$('#phNext').onclick=()=>phLocalActive>=0?phLocalSkip(1):phPlayTrack(PH.track+1);
     $$('#advPhone [data-track]').forEach(b=>b.onclick=()=>phPlayTrack(+b.dataset.track));
-    $$('#advPhone [data-official]').forEach(a=>a.onclick=phOpenOfficial);
+    $$('#advPhone [data-local]').forEach(b=>b.onclick=()=>phLocalPlay(+b.dataset.local));$$('#advPhone [data-choose]').forEach(b=>b.onclick=()=>$('#phImport'+b.dataset.choose).click());$$('#advPhone [data-import]').forEach(input=>input.onchange=async()=>{const f=input.files?.[0],i=+input.dataset.import;if(!f)return;if(f.size>50*1024*1024){toast('Choose audio under 50 MB');return}await phLocalSave(i,f);if(ADV.on)phLocalPlay(i)});phLocalRefresh();
     $$('#advPhone [data-st]').forEach(b=>b.onclick=()=>{
       phRadioStop();PH.radio=+b.dataset.st;auInit();
       AU.ni=0;AU.next=0;if(AU.ctx)AU.ctx.resume().catch(()=>{});phRadioPaint();
@@ -5514,7 +5513,7 @@ function phLens(c,cw,ch,W,H,ox,oy,k,t){const L=PHL[PH.l][1];if(L==='none')return
   if(L==='snow'){const g=c.createLinearGradient(0,ch*.75,0,ch);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(235,245,255,.75)');c.fillStyle=g;c.fillRect(0,ch*.75,cw,ch*.25);c.font=`${Math.round(cw/16)}px serif`;for(let j=0;j<18;j++){const x=(j*97.3%1)*cw,y=((j*53.7+t*30*(1+j%3))%(ch+40))-20;c.fillText('❄️',(j*0.37*cw+x)%cw,y)}}
   if(L==='stamp'){const s=Math.round(cw/14);c.fillStyle='rgba(0,0,0,.35)';c.fillRect(0,ch-s*2.6,cw,s*2.6);c.fillStyle='#fff';c.font=`800 ${s}px system-ui,sans-serif`;c.fillText(`🏔️ ${PLACE?PLACE.name:'Himachal'}`,cw/2,ch-s*1.65);c.font=`600 ${Math.round(s*.6)}px system-ui,sans-serif`;c.fillText(`${NAME('Komal')} 💗 ${NAME('Cheeku')} · ${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}`,cw/2,ch-s*.7)}}
 /* called right after each render (drawing buffer is still valid) */
-function phFrame(){if(!PH.open||PH.scr!=='snap')return;PH.fr++;phSelfieCam();if(PH.fr%2&&QUAL().scale<1.3)return;const v=$('#phV');if(!v)return;const cv=$('#advCv'),W=cv.width,H=cv.height;const c=v.getContext('2d');
+function phFrame(){if(!PH.open||PH.scr!=='snap')return;PH.fr++;phSelfieCam();const now=performance.now();if(now-(PH.previewAt||0)<50)return;PH.previewAt=now;const v=$('#phV');if(!v)return;const cv=$('#advCv'),W=cv.width,H=cv.height;const c=v.getContext('2d');
   const ar=v.width/v.height,sh=H,oy=0;const [sw,ox]=phCrop(W,H,ar);c.filter=PHF[PH.f][1]||'none';c.drawImage(cv,ox,oy,sw,sh,0,0,v.width,v.height);c.filter='none';phLens(c,v.width,v.height,W,H,ox,oy,v.width/sw,performance.now()/1000)}
 function phShoot(){const cv=$('#advCv');const ow=cv.width,oh=cv.height;const k=Math.min(2,1500/Math.max(ow,oh));
   try{if(k>1.05){cv.width=Math.round(ow*k);cv.height=Math.round(oh*k)}render()}catch(e){}
@@ -5536,7 +5535,7 @@ function phRadioStep(){if(!AU.ctx||PH.radio<0||!AU.mus)return;const r=RADIO[PH.r
 /* partner notifications */
 (function(){const nn=window.__natNotif;if(nn)window.__natNotif=function(d){if(d&&d.t==='gram'){const n=NAME(S.me);const t=T(d.a==='like'?'phLikeN':'phGramN',{n});return {_n:t,_s:t.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,'').trim(),_t:`${EM[S.me]||'💗'} ${n}`,_k:'',_e:d.a==='like'?'❤️':'🌄',_o:'adv'}}return nn(d)}})();
 (function(){const _ss=startShared;startShared=function(){_ss();liveCol('gram',()=>{if(PH.open&&PH.scr==='gram')phGo('gram')})}})();
-(function(){const b=$('#advPhB');if(b)b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!G7)return;PH.open?phClose():phOpen()});
+(function(){const b=$('#advPhB');if(b){b.setAttribute('type','button');b.addEventListener('pointerdown',e=>e.stopPropagation());b.addEventListener('click',e=>{e.stopPropagation();if(!ADV.on||!G7)return;PH.open?phClose():phOpen()});}
   addEventListener('keydown',e=>{if(PH.open&&e.key==='Escape')phClose()});
   const e=phEl();['pointerdown','touchstart','mousedown','wheel'].forEach(k=>e.addEventListener(k,ev=>ev.stopPropagation(),{passive:true}));
   const _c=advClose;advClose=function(){phClose();phRadioStop();PH.radio=-1;return _c.apply(this,arguments)}})();
@@ -5749,10 +5748,13 @@ const nPick=a=>a[Math.floor(Math.random()*a.length)];
 /* a line is [roman-hinglish, devanagari]; we show the user's script and speak Devanagari for a natural Hindi voice */
 const nTxt=l=>Array.isArray(l)?(SET.uiLang==='hi'?l[1]:l[0]):String(l);
 const nSay=l=>Array.isArray(l)?l[1]:String(l);
-function npcSpeak(line,v){if(!ADV.snd||!NV.on)return;const t=nSay(line).replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,'').trim();if(!t)return;v=v||{p:1,r:1};
-  try{if(window.ChinuNative&&ChinuNative.speakNpc){ChinuNative.speakNpc(t,v.p,v.r);return}}catch(e){}
-  try{const u=new SpeechSynthesisUtterance(t);u.lang='hi-IN';u.pitch=v.p;u.rate=v.r;const vs=(speechSynthesis.getVoices()||[]).filter(x=>/^hi/i.test(x.lang));if(vs.length)u.voice=vs[0];speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
-function npcHush(){try{if(window.ChinuNative&&ChinuNative.stopSpeak)ChinuNative.stopSpeak()}catch(e){}try{speechSynthesis.cancel()}catch(e){}}
+let gameNpcSerial=0,gameNpcLast=null;
+function npcVoice(n){const type=n?.type||'',female=!!n?.look?.f,kid=type==='kid',older=type==='uncle'||type==='aunty',base=n?.look?.v||{p:1,r:1};return {gender:kid?'child':female?'female':'male',p:kid?Math.max(1.35,base.p):older?(female?1.05:.76):base.p,r:older?.84:kid?1.08:base.r,key:[type,n?.name||'',n?NPCS.list.indexOf(n):0].join(':')}}
+function npcBrowserPlay(q){try{const ss=window.speechSynthesis,raw=window.__gameRawSpeech;if(!ss||!window.SpeechSynthesisUtterance)return;const u=new SpeechSynthesisUtterance(q.text);u.lang='hi-IN';u.pitch=q.v.p;u.rate=q.v.r;const vs=(ss.getVoices()||[]).filter(x=>/^hi/i.test(x.lang));const re=q.v.gender==='male'?/(?<!fe)male|smtm|-x-(hid|hie)/i:/female|smtf|-x-(hia|hic)/i;const matched=vs.filter(x=>re.test(x.name));const pool=matched.length?matched:vs;if(pool.length){let h=0;for(const c of q.v.key)h=(Math.imul(31,h)+c.charCodeAt(0))|0;u.voice=pool[(h>>>0)%pool.length]}if(raw){raw.cancel();raw.speak(u)}else{ss.cancel();ss.speak(u)}}catch(e){}}
+window.__gameNpcFailed=id=>{if(gameNpcLast&&String(id)===gameNpcLast.id&&ADV.on&&ADV.snd&&NV.on)npcBrowserPlay(gameNpcLast)};
+window.__npcVoiceStatus=(id,state)=>{if(state==='error')window.__gameNpcFailed(id)};
+function npcSpeak(line,n){if(!ADV.snd||!NV.on)return;const t=nSay(line).replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,'').trim();if(!t)return;const v=npcVoice(n),id=String(++gameNpcSerial);gameNpcLast={text:t,v,id};try{if(window.ChinuNative&&typeof ChinuNative.gameNpcSpeak==='function'){ChinuNative.gameNpcSpeak(t,v.p,v.r,v.gender,v.key,id);return}if(window.ChinuNative&&typeof ChinuNative.speakNpcV2==='function'){ChinuNative.speakNpcV2(t,v.p,v.r,v.gender,v.key,id);return}if(window.ChinuNative&&typeof ChinuNative.speakNpcProfile==='function'){ChinuNative.speakNpcProfile(t,v.p,v.r,v.gender,v.key);return}if(window.ChinuNative&&typeof ChinuNative.speakNpc==='function'){ChinuNative.speakNpc(t,v.p,v.r);return}}catch(e){}npcBrowserPlay(gameNpcLast)}
+function npcHush(){gameNpcLast=null;try{if(window.ChinuNative&&typeof ChinuNative.gameNpcStop==='function')ChinuNative.gameNpcStop();else if(window.ChinuNative?.stopNpc)ChinuNative.stopNpc();else if(window.ChinuNative?.stopSpeak)ChinuNative.stopSpeak()}catch(e){}try{window.__gameRawSpeech?window.__gameRawSpeech.cancel():speechSynthesis.cancel()}catch(e){}}
 /* ---------------- dialogue lines ---------------- */
 const NL={
  greet:[['Namaste ji! 🙏','नमस्ते जी!'],['Ram Ram ji!','राम राम जी!'],['Aur bhai, kaise ho?','और भाई, कैसे हो?'],['Swagat hai aapka pahadon mein!','स्वागत है आपका पहाड़ों में!']],
@@ -5845,15 +5847,15 @@ function npcStep(dt){if(!G7||!W7.P)return;const st=G7,me=st.ch[myId()];const inI
       npcLine(n,nPick(pool),performance.now()-NV.last>9000);if(Math.random()<.4)n.wave=1.6}}
   npcBubbles()}
 /* speech bubbles over NPC heads */
-function npcLine(n,l,voice){n.say=nTxt(l);n.sayT=Math.min(7,2.6+n.say.length*.06);n.talkT=n.sayT*.8;if(voice!==false){NV.last=performance.now();npcSpeak(l,n.look.v)}}
-function npcBubbles(){const v=$('#advView');if(!v)return;let box=$('#npcBubs');if(!box){box=document.createElement('div');box.id='npcBubs';v.appendChild(box)}const cv=$('#advCv');const r=cv.getBoundingClientRect(),vr=v.getBoundingClientRect();let html='';
-  for(const n of NPCS.list){if(!n.say||n.far||n.convo)continue;n.sayT-=1/60;if(n.sayT<=0){n.say=null;continue}const m=ADV.VP;if(!m)continue;const y=n.y+1.95*n.look.h;const p=[n.x,y,n.z];const X=m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12],Y=m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13],Wc=m[3]*p[0]+m[7]*p[1]+m[11]*p[2]+m[15];if(Wc<.1)continue;
+function npcLine(n,l,voice){n.say=nTxt(l);n.sayT=Math.min(7,2.6+n.say.length*.06);n.talkT=n.sayT*.8;if(voice!==false){NV.last=performance.now();npcSpeak(l,n)}}
+function npcBubbles(){const now=performance.now();for(const n of NPCS.list){if(n.say&&!n.far&&!n.convo){n.sayT-=1/60;if(n.sayT<=0)n.say=null}}if(now-(ADV.lastNpcBub||0)<50)return;ADV.lastNpcBub=now;const v=$('#advView');if(!v)return;let box=$('#npcBubs');if(!box){box=document.createElement('div');box.id='npcBubs';v.appendChild(box)}const cv=$('#advCv');const r=cv.getBoundingClientRect(),vr=v.getBoundingClientRect();let html='';
+  for(const n of NPCS.list){if(!n.say||n.far||n.convo)continue;const m=ADV.VP;if(!m)continue;const y=n.y+1.95*n.look.h;const p=[n.x,y,n.z];const X=m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12],Y=m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13],Wc=m[3]*p[0]+m[7]*p[1]+m[11]*p[2]+m[15];if(Wc<.1)continue;
     const sx=(X/Wc*.5+.5)*r.width+r.left-vr.left,sy=(1-(Y/Wc*.5+.5))*r.height+r.top-vr.top;if(sx<-60||sx>r.width+60||sy<0)continue;html+=`<div class="npc-bub" style="left:${sx.toFixed(0)}px;top:${sy.toFixed(0)}px"><b>${esc(n.name)}</b>${esc(n.say)}</div>`}
   if(box._h!==html){box.innerHTML=html;box._h=html}}
 /* ---------------- conversation panel ---------------- */
 function dlg(n,line,opts){let d=$('#npcDlg');if(!d){d=document.createElement('div');d.id='npcDlg';$('#advView').appendChild(d);['pointerdown','touchstart'].forEach(k=>d.addEventListener(k,e=>e.stopPropagation(),{passive:true}))}
-  NPCS.cur=n;if(n){n.convo=true;npcLine(n,line,true)}d.classList.add('on');d.innerHTML=`<div class="nd-h"><span class="nd-av" style="background:${n?'#'+n.look.top.map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join(''):'#555'}">${n&&n.look.f?'👩':'👨'}</span><b>${esc(n?n.name:'')}</b><button class="nd-x press">✕</button></div><p>${esc(nTxt(line))}</p><div class="nd-o">${(opts||[]).map((o,i)=>`<button class="btn ${i?'glass':'solid'} press" data-o="${i}">${esc(nTxt(o[0]))}</button>`).join('')}</div>`;
-  d.querySelector('.nd-x').onclick=()=>dlgClose();d.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.o];sfx('pop');if(o[1])o[1]();else dlgClose()})}
+  NPCS.cur=n;if(n){n.convo=true;npcLine(n,line,true)}d.classList.add('on');d.innerHTML=`<div class="nd-h"><span class="nd-av" style="background:${n?'#'+n.look.top.map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join(''):'#555'}">${n&&n.look.f?'👩':'👨'}</span><b>${esc(n?n.name:'')}</b><button class="nd-replay press" aria-label="Replay NPC voice">🔊</button><button class="nd-x press">✕</button></div><p>${esc(nTxt(line))}</p><div class="nd-o">${(opts||[]).map((o,i)=>`<button class="btn ${i?'glass':'solid'} press" data-o="${i}">${esc(nTxt(o[0]))}</button>`).join('')}</div>`;
+  d.querySelector('.nd-replay').onclick=()=>npcSpeak(line,n);d.querySelector('.nd-x').onclick=()=>dlgClose();d.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.o];sfx('pop');if(o[1])o[1]();else dlgClose()})}
 function dlgClose(){const d=$('#npcDlg');if(d)d.classList.remove('on');if(NPCS.cur){NPCS.cur.convo=false;NPCS.cur.cd=8}NPCS.cur=null}
 /* ---------------- talk to a person ---------------- */
 function npcTalk(n){const st=G7;const kind=n.role||n.type;if(n.svc){const a=n.svc;dlgClose();npcLine(n,nPick(NL[n.lines]||NL.greet),true);setTimeout(()=>{if(a.k==='kirana')kiranaMenu(n);else origDoAction(a,false)},650);return}
@@ -5867,12 +5869,8 @@ function npcPhoto(n){dlgClose();const st=G7;const me=st.ch[myId()],pt=st.ch[pId(
   npcLine(n,['Smile karo… 1, 2, 3!','स्माइल करो… एक, दो, तीन!'],true);ADV.camOv=[[mx+Math.sin(ang)*3.4,my+1.55,mz+Math.cos(ang)*3.4],[mx,my+1.15,mz],.78];
   setTimeout(()=>{try{const img=postcard('📸 '+PLACE.name);albumAdd(img,PLACE.name);sfx('snap');const f=$('#advFlash');if(f){f.classList.remove('on');void f.offsetWidth;f.classList.add('on')}}catch(e){}setTimeout(()=>{ADV.camOv=null;advBanner(TR3('📸 Photo saved to your album!','📸 Photo album mein save ho gayi!','📸 फोटो एल्बम में सेव हो गई!')[LI[SET.uiLang]]||'📸',2600);npcLine(n,['Bahut pyaari photo aayi hai!','बहुत प्यारी फोटो आई है!'],true);G7.hearts+=2},700)},2300)}
 /* ---------------- 💳 payments: cash or UPI ---------------- */
-function payFlow(amount,to,done){advMenu(`<h2>💳 ${rupee(amount)}</h2><p>${esc(to)}</p><button class="btn solid full press" id="pyUpi">📱 UPI (ChinuPay)</button><button class="btn glass full press" id="pyCash">💵 Cash</button><button class="btn glass full press" id="pyNo">✕</button>`);
-  $('#pyNo').onclick=()=>advMenu(null);$('#pyCash').onclick=()=>{advMenu(null);if(!spend(amount,to))return;sfx('coin');done&&done('cash')};
-  $('#pyUpi').onclick=()=>{let pin='';const draw=()=>advMenu(`<div class="upi"><div class="upi-h">ChinuPay · UPI</div><div class="upi-to">${esc(to)}</div><div class="upi-amt">${rupee(amount)}</div><div class="upi-pin">${[0,1,2,3].map(i=>`<i class="${i<pin.length?'on':''}"></i>`).join('')}</div><small>Enter UPI PIN</small>
-      <div class="upi-k">${[1,2,3,4,5,6,7,8,9,'✕',0,'⌫'].map(k=>`<button class="press" data-k="${k}">${k}</button>`).join('')}</div></div>`)||bind();
-    const bind=()=>{$$('.upi-k [data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;haptic(8);if(k==='✕'){advMenu(null);return}if(k==='⌫')pin=pin.slice(0,-1);else if(pin.length<4)pin+=k;draw();bind();if(pin.length===4){setTimeout(()=>{if(TRIP.money<amount){advMenu(`<div class="upi"><div class="upi-fail">❌</div><b>Insufficient balance</b></div><button class="btn glass full press" id="pyX">OK</button>`);$('#pyX').onclick=()=>advMenu(null);return}
-        spend(amount,'📱 '+to);advMenu(`<div class="upi"><div class="upi-ok">✓</div><div class="upi-amt">${rupee(amount)}</div><b>Paid to ${esc(to)}</b><small>UPI Ref ${Date.now().toString().slice(-10)}</small></div>`);sfx('coin');haptic([20,40,20]);setTimeout(()=>{advMenu(null);done&&done('upi')},1500)},450)}})};draw();bind()}}
+function virtualPay(amount,to,done){if(!TRIP||!Number.isFinite(amount)||amount<=0)return;advMenu(`<div class="upi"><div class="upi-h">ChinuPay · Virtual UPI</div><div class="upi-to">${esc(to)}</div><div class="upi-amt">${rupee(amount)}</div><small>Game money only. No real bank or UPI PIN.</small><button class="btn solid full press" id="upiConfirm">Confirm virtual payment</button><button class="btn glass full press" id="upiCancel">Cancel</button></div>`);$('#upiCancel').onclick=()=>advMenu(null);$('#upiConfirm').onclick=()=>{const b=$('#upiConfirm');if(b.disabled)return;b.disabled=true;if(!spend(amount,'📱 '+to)){advMenu(null);return}tripSave(true);sfx('coin');advMenu(`<div class="upi"><div class="upi-ok">✓</div><div class="upi-amt">${rupee(amount)}</div><b>Virtual payment to ${esc(to)}</b></div><button class="btn glass full press" id="upiDone">Done</button>`);$('#upiDone').onclick=()=>{advMenu(null);done&&done('upi')}}}
+function payFlow(amount,to,done){if(!TRIP||!Number.isFinite(amount)||amount<=0)return;advMenu(`<h2>💳 ${rupee(amount)}</h2><p>${esc(to)}</p><button class="btn solid full press" id="pyUpi">📱 UPI (ChinuPay)</button><button class="btn glass full press" id="pyCash">💵 Cash</button><button class="btn glass full press" id="pyNo">✕</button>`);$('#pyNo').onclick=()=>advMenu(null);$('#pyCash').onclick=()=>{advMenu(null);if(!spend(amount,to))return;tripSave(true);done&&done('cash')};$('#pyUpi').onclick=()=>virtualPay(amount,to,done)}
 /* ---------------- 🏠 interiors (built far away, entered through doors) ---------------- */
 function intBox(g,x,z,hx,hz,h,wall,floor,ceil){g.box(x,-.2,z,hx,.1,hz,floor,0,floor);g.box(x,h,z,hx,.08,hz,ceil);g.box(x,0,z+hz,hx,h/2,.1,wall);g.box(x,0,z-hz,hx,h/2,.1,wall);g.box(x-hx,0,z,.1,h/2,hz,wall);g.box(x+hx,0,z,.1,h/2,hz,wall);g.box(x,0,z-hz+.12,hx,.06,.03,wall.map(v=>v*.7));}
 function buildInteriors(g){const I={};const wood=C7('#6b4430'),wd2=C7('#8a5a3c'),wh=C7('#f2ede4'),glass=C7('#cfe6ff'),dark=C7('#1d1d22'),steel=C7('#b9bcc2');
