@@ -658,6 +658,15 @@ body{font-family:"MiSans","MiSans VF","Mi Sans",system-ui,-apple-system,"Segoe U
 #advView.rot{transform-origin:0 0;transform:translateX(100vw) rotate(90deg)}
 #advCv{position:absolute;left:0;top:0;display:block}
 .adv-hud{position:absolute;left:0;right:0;top:0;display:flex;align-items:flex-start;gap:10px;padding:10px max(14px,env(safe-area-inset-right)) 0 max(14px,env(safe-area-inset-left));pointer-events:none}
+#realMap{position:absolute;top:64px;left:max(14px,env(safe-area-inset-left));width:76px;height:76px;border-radius:50%;background:#152126e8;pointer-events:none;z-index:2}
+.adv-hud{z-index:5}
+.adv-hud .adv-b{flex:0 0 44px;color:#fff;background:#18253be8;backdrop-filter:none}
+.adv-k svg{width:24px;height:24px;pointer-events:none}.adv-k.big svg{width:32px;height:32px}#advView.driving #advJ svg{display:none}
+.adv-hud .adv-b svg{width:23px;height:23px;pointer-events:none}
+#advView.compact .adv-hud{gap:5px;padding-inline:8px}
+#advView.compact .adv-stat{min-width:0;padding-inline:7px;gap:5px}
+#advView.compact #advZone,#advView.compact .adv-cold,#advView.compact .adv-prog,#advView.compact .adv-live{display:none!important}
+#advView.compact #realMap{width:60px;height:60px;top:60px}
 .adv-hud>*{pointer-events:auto}
 .adv-b{width:44px;height:44px;border-radius:15px;background:rgba(15,25,50,.42);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-size:19px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.35)}
 .adv-stat{flex:1;display:flex;align-items:center;gap:10px;max-width:430px;margin:0 auto;padding:7px 14px;border-radius:16px;background:rgba(15,25,50,.42);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3);font-weight:700;font-size:14px}
@@ -1108,7 +1117,7 @@ body{font-family:"MiSans","MiSans VF","Mi Sans",system-ui,-apple-system,"Segoe U
 <div class="glass" id="timerPill">⏱ <span id="timerTxt">00:00</span> <span id="timerLbl" style="color:var(--mut);font-weight:400"></span><button id="timerX" style="margin-left:6px">✕</button></div>
 <div class="glass" id="siri"><button id="siriX">✕</button><div class="sorb"><i></i><i></i><i></i><i></i><b></b></div><div class="stext"><small>CHINU</small><div id="siriTxt"></div><div id="siriAct"></div></div></div>
 <div id="advView"><canvas id="advCv"></canvas>
-    <canvas id="realMap" hidden width="148" height="148" aria-label="Live map" style="position:absolute;top:61px;right:16px;width:82px;height:82px;border-radius:50%;background:#152126d9;pointer-events:none;z-index:2"></canvas>
+    <canvas id="realMap" hidden width="168" height="168" aria-label="Live map"></canvas>
     <div id="realStance" hidden style="position:absolute;right:18px;bottom:138px;z-index:3;gap:6px">
       <button class="chip press" type="button" id="realSit" style="background:#192735cc;border:1px solid #ffffff38">Sit</button>
       <button class="chip press" type="button" id="realCrouch" style="background:#192735cc;border:1px solid #ffffff38">Crouch</button>
@@ -1119,13 +1128,13 @@ body{font-family:"MiSans","MiSans VF","Mi Sans",system-ui,-apple-system,"Segoe U
       <button class="chip press" id="realNo" type="button">Cancel</button>
     </div><audio id="advAudio" autoplay playsinline></audio>
  <div class="adv-bub" id="advBubK"></div><div class="adv-bub" id="advBubC"></div>
- <div class="adv-hud"><button class="adv-b press" id="advPause">⏸</button>
+ <div class="adv-hud"><button class="adv-b press" id="advPause" aria-label="Pause"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5v14m6-14v14"/></svg></button>
   <div class="adv-stat"><span id="advHearts">💗 0</span><span class="adv-money" id="advMoney"></span><span class="adv-clock" id="advClock"></span><div class="adv-prog"><i id="advProgI"></i></div><span id="advZone"></span><span class="adv-cold" id="advCold" title="thand">🥶<i><b id="advColdI"></b></i></span></div>
-  <span class="adv-live" id="advLiveS" style="display:none"></span><button class="adv-b press" id="advMic" style="display:none">🎙️</button><button class="adv-b press" id="advPhB">📱</button><button class="adv-b press" id="advMapB2">🗺️</button><button class="adv-b press" id="advCamB">🎥</button><button class="adv-b press" id="advSwap" title="switch">👫</button></div>
+  <span class="adv-live" id="advLiveS" style="display:none"></span><button class="adv-b press" id="advMic" style="display:none" aria-label="Microphone"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5a3 3 0 0 1 6 0v6a3 3 0 0 1-6 0zm-3 5v1a6 6 0 0 0 12 0v-1m-6 7v4m-3 0h6"/></svg></button><button class="adv-b press" id="advPhB" aria-label="Phone"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm3 15h2"/></svg></button><button class="adv-b press" id="advMapB2" aria-label="Open map"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zm6-3v15m6-12v15"/></svg></button><button class="adv-b press" id="advCamB" aria-label="Camera view"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h12v12H3zm12 4 6-4v12l-6-4"/></svg></button><button class="adv-b press" id="advSwap" title="switch" aria-label="Switch player"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h15m-4-4 4 4-4 4M20 16H5m4-4-4 4 4 4"/></svg></button></div>
  <div class="adv-joy" id="advJoy"><div class="hint">🕹️<br><span data-t="advJoy"></span></div><div class="base"><div class="knob"></div></div></div>
- <div class="adv-pad"><button class="adv-k" id="advEmoB">😊</button><button class="adv-k dim" id="advHand">🤝</button><span></span><button class="adv-k big" id="advJ">⤒</button></div>
+ <div class="adv-pad"><button class="adv-k" id="advEmoB" aria-label="Couple actions"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11c0 4-3 7-8 7H8l-4 3v-5a6 6 0 0 1-2-5c0-4 4-7 9-7s9 3 9 7zm-12 0h.1m3.9 0h.1m3.9 0h.1"/></svg></button><button class="adv-k dim" id="advHand" aria-label="Hold hands"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20 4 13a4 4 0 0 1 6-6l2 2 2-2a4 4 0 0 1 6 6l-7 7a1.5 1.5 0 0 1-2 0z"/></svg></button><span></span><button class="adv-k big" id="advJ" aria-label="Jump"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12l6-6 6 6m-6-6v12"/></svg></button></div>
  <button class="adv-act" id="advAct"></button>
- <button class="adv-k" id="advSnap">📸</button>
+ <button class="adv-k" id="advSnap" aria-label="Take photo"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h4l2-3h6l2 3h4v13H3zm9 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6"/></svg></button>
  <div class="adv-emo" id="advEmo"></div>
  <div class="adv-banner" id="advBanner"></div><div class="adv-flash" id="advFlash"></div>
  <div class="adv-menu" id="advMenu"></div>
@@ -3383,7 +3392,7 @@ N.on('thinking',()=>{});
 function nativeAsk(text){return new Promise(res=>{let done=false;const fin=r=>{if(done)return;done=true;const i=NATQ.indexOf(fin);if(i>=0)NATQ.splice(i,1);res(r)};NATQ.push(fin);
   try{ChinuNative.command(text,N.lang())}catch(e){fin('')}setTimeout(()=>fin(''),12000)})}
 N.ask=nativeAsk;
-function listenAgain(pop){wake.mode='ptt';wake.ptt=true;if(pop)siriShow('listen',T('yesTell'));else orbState('listen',T('listening'));CAP.dict&&CAP.dict.start()}
+function listenAgain(pop){if(wake.ptt||!CAP.dict||Date.now()<speakingUntil)return;wake.mode='ptt';wake.ptt=true;if(pop)siriShow('listen',T('yesTell'));else orbState('listen',T('listening'));CAP.dict&&CAP.dict.start()}
 const _askW=askChinu;
 askChinu=async function(text,fromVoice){
   text=(text||'').trim();if(!text||busy)return;
@@ -3395,7 +3404,7 @@ askChinu=async function(text,fromVoice){
   if(pop){addMsg('ai',reply);siriShow('speak',reply)}else bub.textContent=reply;
   HIST.push({role:'assistant',content:reply});LS.set('hist',HIST.slice(-40));busy=false;
   await speechStream().end(reply);
-  if(natFollow){natFollow=false;listenAgain(pop);if(pop)siriHide(9000);return}
+  if(natFollow){natFollow=false;setTimeout(()=>{if(!busy){listenAgain(pop);if(pop)siriHide(9000)}},Math.max(260,speakingUntil-Date.now()+40));return}
   if(pop)siriHide(3500);else orbState(null)};
 
 /* the AI can use the phone too */
@@ -3413,7 +3422,12 @@ playMedia=function(q,kind,named){q=(q||'').trim()||'trending hindi songs';kind=k
   return _pmN(q,kind,named)};
 
 /* app opened by "Hey Chinu" over the lock screen / assistant button */
-N.on('wake',()=>{haptic(12);setTimeout(()=>{if(busy)return;listenAgain(curTab!=='ai');if(curTab!=='ai')siriHide(9000)},250)});
+let nativeWakeAt=0;
+N.on('wake',()=>{
+  if(busy||wake.ptt||Date.now()<speakingUntil||Date.now()-nativeWakeAt<3500)return;
+  nativeWakeAt=Date.now();haptic(12);
+  listenAgain(curTab!=='ai');if(curTab!=='ai')siriHide(9000);
+});
 
 /* ---------- settings: phone powers ---------- */
 function appPicker(kind){let list=[];try{list=JSON.parse(ChinuNative.apps())}catch(e){}
@@ -3815,6 +3829,14 @@ function terrainH(x,z,L){const pl=PLACE;const {s,d}=L||vloc(x,z);if(pl.id==='lad
   if(pl.side){const q=Math.abs(d-pl.side.d);if(q<pl.side.w+4)h=lerp(h,hp(s)-pl.side.depth,smooth(pl.side.w+4,pl.side.w*.6,q))}
   const k=pl.lake;if(k){const u=(s-k.s)/(k.rs*1.15),v=(d-k.d)/(k.rd*1.15),r=u*u+v*v;if(r<1.2){h=lerp(h,lakeY()-(k.water?1.2:0),smooth(1.2,.8,r))}}
   return h}
+function renderedTerrainY(x,z){
+  const g=W7.terrainGrid;if(!g)return terrainH(x,z);
+  const u=(x-g.X0)/g.DX,v=(z-g.Z0)/g.DX,i=Math.floor(u),j=Math.floor(v);
+  if(i<0||j<0||i>=g.nx||j>=g.nz)return terrainH(x,z);
+  const p=u-i,q=v-j,o=j*g.N+i,h=g.H;
+  return h[o]+(q>p? q*(h[o+g.N]-h[o])+p*(h[o+g.N+1]-h[o+g.N])
+                     : p*(h[o+1]-h[o])+q*(h[o+g.N+1]-h[o+1]));
+}
 function zoneOf(s){let z=0;for(let i=0;i<ZONES.length;i++)if(s>=ZONES[i].s)z=i;return z}
 /* --- geometry builder: position, normal, colour, uv --- */
 function GB(){this.a=[]}
@@ -3836,7 +3858,7 @@ GB.prototype.sph=function(cx,cy,cz,rx,ry,rz,col,top,seg=10,st=7,uvF){for(let i=0
 function groundCol(x,z,y,L,ny){const pl=PLACE,B=pl.bio;const s=L.s,d=L.d,ad=Math.abs(d);const nn=noise2(x*.3,z*.3),nb=noise2(x*.07+3,z*.07);const rel=y-hp(s);
   let c=lerpC(B.g1,B.g2,nb);c=lerpC(c,B.dirt,smooth(.55,.8,nn)*.45);
   const rock=lerpC(B.rock,B.rock2,nn);c=lerpC(c,rock,smooth(.84,.66,ny));
-  let snow=Math.max(B.snow,smooth(B.snowLine,B.snowLine+14,rel));snow*=smooth(.5,.72,ny)*.9+.1;if(B.snow>.6)snow=Math.max(snow,B.snow*.8);
+  let snow=Math.max(B.snow,smooth(B.snowLine-3+nn*8,B.snowLine+9+nn*10,rel));snow*=smooth(.32,.70,ny)*.78+.22;if(B.snow>.6)snow=Math.max(snow,B.snow*.8);
   c=lerpC(c,lerpC(C7('#f4f8fc'),C7('#dfeaf6'),nb),Math.min(1,snow));
   if(ad<(pl.trailW||2.1)&&!(pl.river&&Math.abs(s-RIVER)<7)&&!(pl.crev&&Math.abs(s-CREV)<6)){const icy=(pl.ice||[]).some(([a,b])=>s>a&&s<b);c=lerpC(icy?C7('#bfe6f7'):B.trail,c,icy?.15:Math.min(.6,B.snow*.5)+nn*.15)}
   if(pl.town&&s>pl.town[0]&&s<pl.town[1]&&ad<(pl.townW||7))c=lerpC(B.pave,c,.15+nn*.1);
@@ -3852,7 +3874,7 @@ function buildTerrain(g){const P=W7.P;let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;P.forEac
     const x=X0+i*DX,z=Z0+j*DX;CL[j*N+i]=groundCol(x,z,H[j*N+i],LS_[j*N+i],n[1])}
   for(let j=0;j<nz;j++)for(let i=0;i<nx;i++){const id=(a,b)=>(j+b)*N+i+a;const V=(a,b)=>[X0+(i+a)*DX,H[id(a,b)],Z0+(j+b)*DX];
     for(const t of [[[0,0],[0,1],[1,1]],[[0,0],[1,1],[1,0]]])t.forEach(([a,b])=>g.v(V(a,b),NM[id(a,b)],CL[id(a,b)]))}
-  W7.bounds={X0,X1,Z0,Z1}}
+  W7.bounds={X0,X1,Z0,Z1};W7.terrainGrid={X0,Z0,DX,nx,nz,N,H}}
 /* far-away giant peaks around the valley */
 function buildPeaks(g,R){const B=W7.bounds,pl=PLACE;const base=pl.bio.peak||C7('#7f8fac'),top=C7('#ffffff');const snowy=pl.bio.peakSnow!=null?pl.bio.peakSnow:1;
   const peak=(x,z,hh,r)=>{const seg=11;const jit=[];for(let i=0;i<=seg;i++)jit.push(.82+R()*.36);jit[seg]=jit[0];
@@ -4006,8 +4028,19 @@ function glInit(cv){const gl=cv.getContext('webgl',{antialias:true,alpha:false,p
    }
    float unp(vec4 c){return dot(c,vec4(1.,1./255.,1./65025.,1./16581375.));}
    float shadow(){vec3 q=vL.xyz/vL.w*.5+.5;if(q.x<.01||q.x>.99||q.y<.01||q.y>.99||q.z>1.)return 1.;float s=0.;for(int i=-1;i<=1;i+=2)for(int j=-1;j<=1;j+=2){s+=step(q.z-.0035,unp(texture2D(shMap,q.xy+vec2(float(i),float(j))*.0009)));}return mix(.42,1.,s*.25);}
-   void main(){vec3 N=normalize(vN);vec3 V=normalize(cam-vW);vec3 base=vC;float glassF=0.;if(useTex>.5){vec4 t=texture2D(tex,useTex>1.5&&useTex<2.5?vW.xz*.19:vU);if(alphaCutoff>0.&&t.a<alphaCutoff)discard;base=useTex>2.5?base*t.rgb:useTex>1.5?base*mix(vec3(1.15),t.rgb*1.5,.61):mix(base,t.rgb,t.a);}
-    if(detail>.5&&detail<1.5){float d1=vn(vW.xz*1.6),d2=vn(vW.xz*.21+3.);base*=.9+.13*d1+.12*(d2-.5);base*=.86+.28*vn(vW.xz*.025+9.);float stp=1.-smoothstep(.5,.82,N.y);float strata=vn(vec2(vW.y*2.4+vn(vW.xz*.12)*4.,(vW.x+vW.z)*.06));vec3 rockc=vec3(.43,.41,.39)*(.62+.6*strata)*(.82+.32*vn(vW.xz*1.1+vW.y*.7));float snowB=smoothstep(.72,.9,min(base.r,min(base.g,base.b)));base=mix(base,rockc*(snowB>.5?1.05:.95),stp*mix(.55,.85,vn(vW.xz*.33+vW.y*.2)));float grs=step(base.r*1.05,base.g)*step(base.b*1.1,base.g)*(1.-stp);base*=1.-grs*.22*(1.-vn(vW.xz*7.3));base=mix(base,base*vec3(1.22,1.08,.7),grs*smoothstep(.55,.85,vn(vW.xz*.06+4.))*.55);float wht=smoothstep(.78,.93,min(base.r,min(base.g,base.b)));
+   void main(){vec3 N=normalize(vN);vec3 V=normalize(cam-vW);vec3 base=vC;float glassF=0.;if(useTex>1.5&&useTex<2.5){
+      vec2 xz=vW.xz*.33;vec3 rock=texture2D(tex,xz).rgb;
+      if(abs(N.y)<.90){
+        vec3 weight=pow(abs(N),vec3(5.));weight/=max(.001,weight.x+weight.y+weight.z);
+        rock=weight.y*rock+weight.x*texture2D(tex,vW.zy*.27).rgb+weight.z*texture2D(tex,vW.xy*.27).rgb;
+      }
+      float snow=smoothstep(.64,.93,min(base.r,min(base.g,base.b)));
+      base*=mix(vec3(1.23),rock*2.12,.69*(1.-snow));
+    }else if(useTex>.5){
+      vec4 t=texture2D(tex,vU);if(alphaCutoff>0.&&t.a<alphaCutoff)discard;
+      base=useTex>2.5?base*t.rgb:mix(base,t.rgb,t.a);
+    }
+    if(detail>.5&&detail<1.5&&useTex<1.5){float d1=vn(vW.xz*1.6),d2=vn(vW.xz*.21+3.);base*=.9+.13*d1+.12*(d2-.5);base*=.86+.28*vn(vW.xz*.025+9.);float stp=1.-smoothstep(.5,.82,N.y);float strata=vn(vec2(vW.y*2.4+vn(vW.xz*.12)*4.,(vW.x+vW.z)*.06));vec3 rockc=vec3(.43,.41,.39)*(.62+.6*strata)*(.82+.32*vn(vW.xz*1.1+vW.y*.7));float snowB=smoothstep(.72,.9,min(base.r,min(base.g,base.b)));base=mix(base,rockc*(snowB>.5?1.05:.95),stp*mix(.55,.85,vn(vW.xz*.33+vW.y*.2)));float grs=step(base.r*1.05,base.g)*step(base.b*1.1,base.g)*(1.-stp);base*=1.-grs*.22*(1.-vn(vW.xz*7.3));base=mix(base,base*vec3(1.22,1.08,.7),grs*smoothstep(.55,.85,vn(vW.xz*.06+4.))*.55);float wht=smoothstep(.78,.93,min(base.r,min(base.g,base.b)));
      float spk=step(.982,h2(floor(vW.xz*24.)+floor(vW.y*9.)));base+=wht*spk*pow(max(dot(reflect(-L,N),V),0.),6.)*1.2;}
     if(detail>1.5){vec3 an=abs(N);float g1=vn(vW.xz*3.1+vW.y*2.3),g2=vn(vW.xz*.37+vW.y*.4+7.);base*=.9+.12*g1+.1*(g2-.5);
      glassF=step(max(base.r,base.g),.17)*step(base.r*1.25,base.b);float wood=step(base.g*1.12,base.r)*step(base.b*1.08,base.g);float roof=max(step(base.g*1.45,base.r),step(abs(base.r-base.g),.04)*step(base.g,base.b)*step(base.b,.5)*step(.25,base.b));
@@ -4015,7 +4048,7 @@ function glInit(cv){const gl=cv.getContext('webgl',{antialias:true,alpha:false,p
      if(an.y>.3&&an.y<.96&&roof>.5){float f=fract(vW.y*4.5);float hx=an.x>an.z?vW.z:vW.x;float c=fract(hx*2.2+floor(vW.y*4.5)*.5);base*=(.72+.28*smoothstep(0.,.3,f))*(.9+.1*smoothstep(0.,.06,c));}
      float wht=smoothstep(.8,.94,min(base.r,min(base.g,base.b)));base+=wht*N.y*step(.985,h2(floor(vW.xz*26.)))*pow(max(dot(reflect(-L,N),V),0.),5.)*.9;}
     if(water>.5){vec2 q=vW.xz*.32+vec2(time*.06,time*.035);float a=vn(q*3.),b=vn(q*6.+11.),a2=vn(q*13.-time*.2),b2=vn(q*15.+time*.17+5.);N=normalize(vec3((a-.5)*.38+(a2-.5)*.16,1.,(b-.5)*.38+(b2-.5)*.16));float fr=.03+.97*pow(1.-max(dot(N,V),0.),4.);vec3 Rw=reflect(-V,N);vec3 envw=mix(fogC*1.05,skyc*1.45+vec3(.03),smoothstep(-.02,.45,Rw.y));if(hdrAmount>0.)envw=mix(envw,min(ibl(Rw),vec3(3.)),hdrAmount);vec3 deep=base*vec3(.45,.6,.65);base=mix(deep,envw,.12+.78*fr);base+=lc*(pow(max(dot(Rw,L),0.),440.)*3.+pow(max(dot(Rw,L),0.),40.)*.25);}
-    float dif=max(dot(N,L),0.);float sh=shOn>.5?shadow():1.;float snw=smoothstep(.74,.92,min(base.r,min(base.g,base.b)))*(1.-emi);vec3 hemi=mix(amb,skyc,N.y*.5+.5);if(hasTerrainAO>.5&&useTex>1.5&&useTex<2.5)hemi*=mix(.48,1.,texture2D(terrainAO,vW.xz*.19).r);float rim=pow(1.-max(dot(N,V),0.),3.);
+    float dif=max(dot(N,L),0.);float sh=shOn>.5?shadow():1.;float snw=smoothstep(.74,.92,min(base.r,min(base.g,base.b)))*(1.-emi);vec3 hemi=mix(amb,skyc,N.y*.5+.5);if(hasTerrainAO>.5&&useTex>1.5&&useTex<2.5)hemi*=mix(.48,1.,texture2D(terrainAO,vW.xz*.33).r);float rim=pow(1.-max(dot(N,V),0.),3.);
     vec3 col=base*(hemi+lc*dif*sh)+skyc*rim*.12;if(gloss>0.){vec3 Rv=reflect(-V,N);float up=smoothstep(-.25,.35,Rv.y);vec3 env=mix(amb*.55+fogC*.25,mix(fogC,skyc*1.35+vec3(.04),smoothstep(0.,.6,Rv.y)),up);float fr=.05+.95*pow(1.-max(dot(N,V),0.),5.);float sp=pow(max(dot(normalize(L+V),N),0.),gloss>1.9?60.:gloss>1.4?140.:90.)*sh;if(gloss>1.9){col=base*env*1.25+base*lc*dif*sh*.35+lc*sp*1.6;}else{col=mix(col,env,min(.9,fr*(gloss>1.4?1.25:.8)+(gloss>1.4?.18:.04)))+lc*sp*(gloss>1.4?1.4:.9)*min(1.,gloss);}}if(glassF>.5){vec3 Rg=reflect(-V,N);vec3 eg=mix(amb*.5+fogC*.3,skyc*1.3+fogC*.2,smoothstep(-.1,.5,Rg.y));float frg=.25+.75*pow(1.-max(dot(N,V),0.),3.);col=mix(base*.6,eg,frg)+lc*pow(max(dot(normalize(L+V),N),0.),120.)*1.5*sh;}col=mix(col,base,emi);col=mix(col,col*vec3(.84,.92,1.12),snw*(1.-dif*sh)*.75);
     if(isPBR>.5){
       vec3 H=normalize(L+V);float NoV=max(dot(N,V),.01),NoH=max(dot(N,H),0.),VoH=max(dot(V,H),0.);
@@ -4108,7 +4141,10 @@ function realTerrain(gl){
       gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,canvas);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-      gl.generateMipmap(gl.TEXTURE_2D);realTextures.set(gl,tex);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      const aniso=gl.getExtension('EXT_texture_filter_anisotropic');
+      if(aniso)gl.texParameterf(gl.TEXTURE_2D,aniso.TEXTURE_MAX_ANISOTROPY_EXT,Math.min(8,gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
+      realTextures.set(gl,tex);
     };
     img.src='realistic/assets/terrain-albedo.jpg';
     const ao=new Image();
@@ -4240,7 +4276,7 @@ const PLACES={
    for(let i=0;i<3;i++)PROP.house(g,10+i*28,i%2?-11:11,{floors:2});PROP.flags(g,100,12);PROP.bench(g,150,-4.2,'Parvati river');PROP.selfie(g,154,-5.6,'Parvati river');for(let i=0;i<3;i++)PROP.tent(g,380+i*9,i%2?9:-9,['#2f6fd8','#e8b04a','#22a35a'][i]);
    PROP.hotel(g,360,11,2,this.hotels[2][0],{wall:'#f0e2c4',roof:'#22a35a'});PROP.pool(g,422,-5.5,2.3);PROP.sign(g,288,4.4,'Kheerganga trek','12 km · hot spring ♨️')}},
  ladakh:{name:'Leh–Ladakh · Pangong',lat:34.16,lon:77.58,seed:116,len:760,wig:26,bio:{...BIO.spiti,
-    g1:C7('#959060'),g2:C7('#b19b70'),trail:C7('#626368'),snowLine:22,peak:C7('#7f8792')},trailW:3.5,
+    g1:C7('#959060'),g2:C7('#b19b70'),trail:C7('#626368'),snowLine:11,peakSnow:1,treeSnow:.45,peak:C7('#697789')},trailW:3.5,
   trees:{type:['oak','pine'],n:80,near:15},hp:s=>Math.sin(s*.014)*1.7+6*Math.exp(-Math.pow((s-304)/87,2)),
   peakH:1.2,fogK:.56,region:'Ladakh',town:[0,105],
   zones:[[0,'Leh Valley','3,500 m'],[225,'Chang La Road','5,360 m'],[475,'Pangong Tso','4,225 m']],
@@ -4692,7 +4728,10 @@ function drawCanopy(draw,B,cc,sc){for(let k=-3;k<=3;k++)draw(GL7.cube,M4.ch(B,M4
 function limb(draw,Bm,len,r,col){draw(GL7.cyl,M4.ch(Bm,M4.S(r*2,-len,r*2)),col);draw(GL7.ball,M4.ch(Bm,M4.S(r*2,r*2,r*2)),col)}
 function drawPerson(draw,w,c,st,hidden,shadowOnly){
   if(window.ChinuRealistic){
-    if(!hidden)ChinuRealistic.drawAvatar(GL7.gl,draw,w,c,st,M4.ch(M4.T(c.x,c.y,c.z),M4.Ry(c.yaw)));
+    const ground=groundAt(c.x,c.z,c.y+.2,null);
+    const y=c.ground&&ground.surf!=='plat'&&ground.surf!=='end'&&!['carD','carP','bike','pillion','pedal','carrier','ride'].includes(c.pose?.k)&&!ADV.inside
+      ?renderedTerrainY(c.x,c.z):c.y;
+    if(!hidden)ChinuRealistic.drawAvatar(GL7.gl,draw,w,c,st,M4.ch(M4.T(c.x,y,c.z),M4.Ry(c.yaw)));
     return {w,x:c.x,y:c.y+1.68,z:c.z,lead:w===st.lead,hide:hidden,shadowY:shadowOnly?0:groundAt(c.x,c.z,c.y+.2,null).g};
   }
 const a=avOf(w),J=hexRgb(a.jacket||'#888'),Jd=J.map(v=>v*.74),pants=C7('#2d3350'),boot=C7('#4a3122'),skin=C7('#f1c7a6'),hairC=C7(w==='Komal'?'#2b1a14':'#1f150f');
@@ -4781,10 +4820,10 @@ function advLoop(ts){if(!ADV.on)return;ADV.raf=requestAnimationFrame(advLoop);if
   const t0=performance.now();try{render();if(PH.open)phFrame()}catch(e){console.warn(e)}perfWatch(dt)}
 function perfWatch(dt){const p=ADV.perf||(ADV.perf={n:0,sum:0,t:0,bad:0,good:0});p.n++;p.sum+=dt;p.t+=dt;if(p.t<2.5)return;const avg=p.sum/p.n*1000;ADV.fps=Math.round(1000/avg);p.n=0;p.sum=0;p.t=0;
   if(LS.get('adv_gfx','auto')!=='auto')return;
-  if(avg>(ADV.cap30?36:22)){p.bad++;p.good=0;if(p.bad>=2){p.bad=0;if(ADV.tier>0){ADV.tier--;advFit()}else if((ADV.scaleMul||1)>.82){ADV.scaleMul=(ADV.scaleMul||1)-.1;advFit()}else if(PFX.on&&!PFX.autoOff){PFX.autoOff=true;PFX.on=false}else if((ADV.scaleMul||1)>.72){ADV.scaleMul=(ADV.scaleMul||1)-.1;advFit()}else ADV.cap30=true}}
+  if(avg>(ADV.cap30?36:22)){p.bad++;p.good=0;if(p.bad>=2){p.bad=0;if(ADV.tier>0){ADV.tier--;advFit()}else if((ADV.scaleMul||1)>.91){ADV.scaleMul=Math.max(.9,(ADV.scaleMul||1)-.08);advFit()}else if(PFX.on&&!PFX.autoOff){PFX.autoOff=true;PFX.on=false}else ADV.cap30=true}}
   else if(avg<15){p.good++;p.bad=0;if(p.good>=4&&ADV.cap30){ADV.cap30=false;p.good=0}}else{p.bad=0}}
-function advFit(){const v=$('#advView');if(!v)return;const W=innerWidth,H=innerHeight,rot=H>W*1.05;v.classList.toggle('rot',rot);const w=rot?H:W,h=rot?W:H;v.style.width=w+'px';v.style.height=h+'px';
-  const cv=$('#advCv');const q=QUAL();const dpr=Math.min(devicePixelRatio||1,q.scale)*(ADV.scaleMul||1)*Number(LS.get('real_scale',1));cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);cv.style.width=w+'px';cv.style.height=h+'px'}
+function advFit(){const v=$('#advView');if(!v)return;const W=innerWidth,H=innerHeight,rot=H>W*1.05;v.classList.toggle('rot',rot);const w=rot?H:W,h=rot?W:H;v.classList.toggle('compact',w<680);v.style.width=w+'px';v.style.height=h+'px';
+  const cv=$('#advCv');const q=QUAL();const dpr=Math.max(1,Math.min(devicePixelRatio||1,q.scale)*(ADV.scaleMul||1))*Number(LS.get('real_scale',1));cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);cv.style.width=w+'px';cv.style.height=h+'px'}
 function advMenu(html){const m=$('#advMenu');ADV.menu=html?1:null;m.classList.toggle('on',!!html);m.innerHTML=html?`<div class="box">${html}</div>`:'';if(AU.ctx){try{html?AU.ctx.suspend():AU.ctx.resume()}catch(e){}}}
 function optRow(key,opts,cur){return `<div class="adv-opt">${opts.map(([v,l])=>`<button class="chip press ${cur===v?'on':''}" data-o="${key}" data-v="${v}">${T(l)}</button>`).join('')}</div>`}
 const TIME_O=[['trip','tTrip'],['real','tReal'],['dawn','tDawn'],['day','tDay'],['sunset','tSun'],['night','tNight']],WX_O=[['real','wReal'],['snow','wSnow'],['clear','wClear'],['storm','wStorm']],CAM_O=[['far','cFar'],['near','cNear'],['pov','cPov']];
@@ -5844,8 +5883,8 @@ vec3 fx(){vec3 cM=texture2D(sc,uv).rgb;if(fxaa<.5)return cM;vec3 cNW=texture2D(s
 void main(){vec3 c=fx();vec3 bm=texture2D(bl,uv).rgb;c+=bm*bloomK;
  if(rays>0.&&sunV>0.){vec2 dd=(uv-sunP)*(1./18.);vec2 t=uv;float w=1.;vec3 acc=vec3(0.);for(int i=0;i<18;i++){t-=dd;acc+=texture2D(bl,t).rgb*w;w*=.9;}float fall=1.-smoothstep(0.,.9,length(uv-sunP));c+=acc*(1./18.)*rays*sunV*fall*vec3(1.,.9,.75);}
  float l=lu(c);c=mix(c,c*vec3(.94,1.,1.07),(1.-smoothstep(0.,.45,l))*.6);c=mix(c,c*vec3(1.05,1.,.93),smoothstep(.45,1.,l)*.5);c=mix(c,c*vec3(.82,.9,1.12),night*.5);
- vec2 v=uv-.5;c*=mix(1.,smoothstep(.95,.25,length(v*vec2(1.25,1.))),.42);
- c+=(fract(sin(dot(uv*1000.+time,vec2(12.9898,78.233)))*43758.5453)-.5)*.018;gl_FragColor=vec4(c,1.);}`;
+ vec2 v=uv-.5;c*=mix(1.,smoothstep(.95,.25,length(v*vec2(1.25,1.))),.14);
+ c+=(fract(sin(dot(uv*1000.+time,vec2(12.9898,78.233)))*43758.5453)-.5)*.004;gl_FragColor=vec4(c,1.);}`;
 function pfxProg(gl,fs){const mk=(t,s)=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(sh));return sh};
   const p=gl.createProgram();gl.attachShader(p,mk(gl.VERTEX_SHADER,PFX_VS));gl.attachShader(p,mk(gl.FRAGMENT_SHADER,fs));gl.bindAttribLocation(p,0,'p');gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));
   const u={};const n=gl.getProgramParameter(p,gl.ACTIVE_UNIFORMS);for(let i=0;i<n;i++){const a=gl.getActiveUniform(p,i);u[a.name]=gl.getUniformLocation(p,a.name)}return {p,u}}
@@ -5868,10 +5907,10 @@ function pfxEnd(VP,sk,cam){if(!PFX.live)return;const gl=GL7.gl,q=QUAL();PFX.live
     gl.bindFramebuffer(gl.FRAMEBUFFER,PFX.a.f);gl.bindTexture(gl.TEXTURE_2D,PFX.bT);gl.uniform2f(PFX.blur.u.dir,0,1/PFX.h4);pfxQuad(gl,PFX.blur)}
   // 3) composite to screen
   gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,W,H);const C=PFX.comp;gl.useProgram(C.p);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,PFX.aT);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,PFX.sT);
-  gl.uniform1i(C.u.sc,0);gl.uniform1i(C.u.bl,1);gl.uniform2f(C.u.px,1/W,1/H);gl.uniform1f(C.u.time,(G7?G7.t:0)%100);gl.uniform1f(C.u.night,sk.night||0);gl.uniform1f(C.u.fxaa,1);gl.uniform1f(C.u.bloomK,ADV.inside?.25:.34);
+  gl.uniform1i(C.u.sc,0);gl.uniform1i(C.u.bl,1);gl.uniform2f(C.u.px,1/W,1/H);gl.uniform1f(C.u.time,(G7?G7.t:0)%100);gl.uniform1f(C.u.night,sk.night||0);gl.uniform1f(C.u.fxaa,QUAL().scale>=1.2?1:0);gl.uniform1f(C.u.bloomK,ADV.inside?.07:.10);
   let sv=0,sx=.5,sy=.5;if(q.pfx>1&&!ADV.inside&&sk.sun[1]>-.02){const p=[cam[0]+sk.sun[0]*800,cam[1]+sk.sun[1]*800,cam[2]+sk.sun[2]*800];const X=VP[0]*p[0]+VP[4]*p[1]+VP[8]*p[2]+VP[12],Y=VP[1]*p[0]+VP[5]*p[1]+VP[9]*p[2]+VP[13],Wc=VP[3]*p[0]+VP[7]*p[1]+VP[11]*p[2]+VP[15];
     if(Wc>0){sx=X/Wc*.5+.5;sy=Y/Wc*.5+.5;const off=Math.max(0,Math.max(Math.abs(sx-.5),Math.abs(sy-.5))-.5);sv=Math.max(0,1-off*2.2)*Math.min(1,sk.sun[1]*6+.2)*(1-(sk.night||0))*(1-Math.min(.8,(ADV.wx&&ADV.wx.cloud||0)*.8))}}
-  gl.uniform2f(C.u.sunP,sx,sy);gl.uniform1f(C.u.sunV,sv);gl.uniform1f(C.u.rays,q.pfx>1?1.1:0);pfxQuad(gl,C);gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.bindTexture(gl.TEXTURE_2D,null);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,null);gl.activeTexture(gl.TEXTURE0)}
+  gl.uniform2f(C.u.sunP,sx,sy);gl.uniform1f(C.u.sunV,sv);gl.uniform1f(C.u.rays,q.pfx>1?.32:0);pfxQuad(gl,C);gl.enable(gl.DEPTH_TEST);gl.depthMask(true);gl.bindTexture(gl.TEXTURE_2D,null);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,null);gl.activeTexture(gl.TEXTURE0)}
 
 /* ---------- 💞 LIVE: both phones in the same valley, with voice (WebRTC, the relay only introduces them) ---------- */
 Object.assign(STR,{

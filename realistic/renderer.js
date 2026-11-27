@@ -91,12 +91,10 @@ function avatar(gltf, source) {
     'Crouch_Idle_Loop', 'Crouch_Fwd_Loop', 'Sitting_Enter', 'Sitting_Exit', 'Sitting_Idle_Loop',
     'Driving_Loop', 'Dance_Loop'];
   const mixer = new AnimationMixer(vrm.scene);
-  const raw = name => vrm.humanoid.getRawBoneNode(name);
-  const feet = ['leftFoot','leftToes','rightFoot','rightToes'].map(raw).filter(Boolean);
   const actions = new Map((source?.animations || []).filter(clip => names.includes(clip.name))
     .map(clip => [clip.name, mixer.clipAction(retarget(source, vrm, clip))]));
   VRMUtils.rotateVRM0(vrm);
-  return { vrm, mixer, actions, parts: meshes(vrm.scene), feet, stamp: -1 };
+  return { vrm, mixer, actions, parts: meshes(vrm.scene), stamp: -1 };
 }
 function meshes(scene) {
   const parts = [];
@@ -223,6 +221,8 @@ function upload(gl, mesh, gpu) {
     palette = skeleton.bones.map((_, i) => new Matrix4().multiplyMatrices(inverse,
       bone.fromArray(skeleton.boneMatrices, i * 16)).multiply(mesh.bindMatrix).elements);
   }
+  let sole=Infinity;
+  const m=mesh.matrixWorld.elements;
   for (let i = 0, o = 0; i < position.count; i++, o += 11) {
     p.fromBufferAttribute(position, i);
     n.fromBufferAttribute(normal, i);
@@ -249,10 +249,12 @@ function upload(gl, mesh, gpu) {
       }
       n.normalize();
     }
+    if(skin)sole=Math.min(sole,m[1]*p.x+m[5]*p.y+m[9]*p.z+m[13]);
     p.toArray(out, o); n.toArray(out, o + 3);
   }
   gl.bindBuffer(gl.ARRAY_BUFFER, gpu.b);
   gl.bufferData(gl.ARRAY_BUFFER, out, skin ? gl.DYNAMIC_DRAW : gl.STATIC_DRAW);
+  gpu.sole=sole;
 }
 const xAxis = new Vector3(1, 0, 0), zAxis = new Vector3(0, 0, 1);
 const axis = new Vector3(), target = new Vector3(), joint = new Vector3();
@@ -330,23 +332,30 @@ function pose(model, who, c, state, stamp) {
   vrm.expressionManager?.setValue('ou', kind === 'kiss' ? blend*.12 : 0);
   vrm.update(dt);
   vrm.scene.updateMatrixWorld(true);
-  const airborne = !c.ground, riding = transition || ['carD','carP','bike','pillion','ride','pedal','carrier'].includes(kind);
-  if (airborne || riding || kind === 'sit' || kind === 'vehicleExit') model.floor = 0;
-  else {
-    const foot = Math.min(...model.feet.map(node => node.getWorldPosition(joint).y));
-    const floor = Math.max(-.55,Math.min(.35,.04-foot));
-    model.floor = Number.isFinite(floor) ? (model.floor??floor)+(floor-(model.floor??floor))*.65 : 0;
-  }
+  model.planted=c.ground&&!transition&&!['carD','carP','bike','pillion','ride','pedal','carrier','sit','vehicleExit'].includes(kind);
+  if(!model.planted)model.floor=0;
   model.stamp = stamp;
 }
 function drawParts(gl, draw, model, basis, stamp, vehicle) {
-  for (const part of model.parts) {
-    const gpu = part.contexts.get(gl) || meshBuffer(gl, part);
+  const buffers=model.parts.map(part=>{
+    const gpu=part.contexts.get(gl)||meshBuffer(gl,part);
     if (gpu.stamp === undefined || part.mesh.isSkinnedMesh && gpu.stamp !== stamp) {
       upload(gl, part.mesh, gpu);
       gpu.stamp = stamp;
     }
-    const matrix = new Matrix4().fromArray(basis).multiply(part.mesh.matrixWorld);
+    return gpu;
+  });
+  const root=new Matrix4().fromArray(basis);
+  if(model.planted){
+    const sole=Math.min(...buffers.map(gpu=>gpu.sole));
+    if(Number.isFinite(sole)){
+      model.floor=Math.max(-.75,Math.min(.45,.013-sole));
+      root.elements[13]+=model.floor;
+    }
+  }
+  for(const [i,part] of model.parts.entries()){
+    const gpu=buffers[i];
+    const matrix=root.clone().multiply(part.mesh.matrixWorld);
     if (vehicle && part.wheel) {
       const { pivot, front } = part.wheel;
       matrix.multiply(new Matrix4().makeTranslation(pivot.x,pivot.y,pivot.z));
@@ -367,9 +376,7 @@ function drawAvatar(gl, draw, who, c, state, matrix) {
     pose(model, who, c, state, stamp);
     model.state = state;
   }
-  const grounded = new Matrix4().fromArray(matrix);
-  grounded.elements[13] += model.floor || 0;
-  drawParts(gl, draw, model, grounded.elements, stamp);
+  drawParts(gl, draw, model, matrix, stamp);
 }
 function drawVehicle(gl, draw, v, basis) {
   const key = variants[v.variant] === v.type ? v.variant : v.type;

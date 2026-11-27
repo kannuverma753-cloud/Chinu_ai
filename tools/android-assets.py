@@ -1,6 +1,7 @@
 """Apply the narrowly scoped WebView asset routing to the generated Android project."""
 import argparse
 from pathlib import Path
+from chinu_voice import patch_voice
 
 parser = argparse.ArgumentParser()
 parser.add_argument("project", type=Path)
@@ -35,3 +36,5 @@ if args.preview:
     assert s.count(needle) == 1
     s = s.replace(needle, 'assets.open("www/index.html").bufferedReader().use { it.readText() }, "text/html"')
 p.write_text(s, encoding="utf-8")
+
+patch_voice(args.project)
