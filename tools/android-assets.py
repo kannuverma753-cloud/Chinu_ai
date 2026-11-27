@@ -21,6 +21,7 @@ s = s.replace(needle, needle + """
                     "js" -> "application/javascript"
                     "jpg" -> "image/jpeg"
                     "png" -> "image/png"
+                    "ogg" -> "audio/ogg"
                     "glb", "vrm" -> "model/gltf-binary"
                     else -> "application/octet-stream"
                 }

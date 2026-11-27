@@ -13,3 +13,9 @@
 - Reduced bloom and screen grain, kept the default render at screen resolution or above, added slope-aware rock texture sampling, and lowered the snow line.
 - Wake now waits for a complete greeting and name. The overlay opens one listening turn and gives system-command follow-ups only when requested by the command. Accessibility connection and teardown no longer eagerly create or retain the overlay.
 - Device microphone behavior and whether Android keeps Accessibility enabled still need validation on the phone.
+
+## In-game phone and radio
+
+- Reworked the phone to fit compact landscape screens. A fixed Back/Close header and scrollable content keep the camera, feed, wallet, chat, map, Explore, and radio controls reachable.
+- Added three original offline romantic instrumentals with play, pause, previous, next, and automatic progression. Existing instrumental stations continue to work while stationary. Closing the phone leaves music playing, and exiting the adventure stops it.
+- The seven curated official romantic tracks open in YouTube and require an internet connection.

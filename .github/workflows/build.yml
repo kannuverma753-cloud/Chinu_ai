@@ -2561,7 +2561,7 @@ jobs:
           rv6RhbkVNSlhX28vIgsRL5wVL10AAOzNWo0I2/o+AAHD7w2A8EcaHvYRscRn+wIAAAAABFla
           EOF_CHINU_B64
           mkdir -p chinu && tar -xJf /tmp/chinu.txz -C chinu
-          NATIVE_VERSION=c548fbbc06d2
+          NATIVE_VERSION=245c79fd09a7
           echo "CHINU_NATIVE=$NATIVE_VERSION" >> "$GITHUB_ENV"
 
       - id: native

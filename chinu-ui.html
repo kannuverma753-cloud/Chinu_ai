@@ -734,8 +734,38 @@ body{font-family:"MiSans","MiSans VF","Mi Sans",system-ui,-apple-system,"Segoe U
 @media (orientation:landscape){.map-card{left:auto;right:12px;top:62px;bottom:auto;transform:none;width:min(360px,40%)}.map-card .row{flex-direction:column}.map-svg{width:62%}}
 .adv-map.ingame .map-card{left:auto;right:12px;top:62px;bottom:auto;transform:none;width:min(360px,40%)}.adv-map.ingame .map-card .row{flex-direction:column}.adv-map.ingame .map-svg{width:62%}
 #advView.driving #advHand,#advView.driving #advEmoB{display:none}#advView.driving #advJ{font-size:0}#advView.driving #advJ::after{content:'📯';font-size:26px}
-.ph{position:absolute;z-index:40;right:12px;top:56px;bottom:8px;width:min(300px,44vw);border-radius:34px;background:#0b0d14;border:3px solid #2a2d38;box-shadow:0 20px 60px rgba(0,0,0,.55),inset 0 0 0 2px #000;overflow:hidden;color:#fff;transform:translateX(120%);transition:transform .32s cubic-bezier(.2,.9,.3,1.1);display:flex;flex-direction:column;font-size:13px}
-.ph.on{transform:none}
+.ph{position:absolute;z-index:40;right:12px;top:56px;bottom:8px;width:min(350px,calc(100% - 24px));border-radius:22px;background:#111723;border:1px solid #3c485c;box-shadow:0 18px 48px #0009;overflow:hidden;color:#fff;display:none;flex-direction:column;font-size:13px;touch-action:auto}
+.ph.on{display:flex}
+#advView.phone-open{touch-action:auto}
+.ph-scrim{position:absolute;inset:0;z-index:39;border:0;background:#080c1692}
+.ph-title{height:44px;flex:none;padding:0 9px;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;background:#192338;border-bottom:1px solid #ffffff18}
+.ph-title-label{display:flex;align-items:center;justify-content:center;min-width:0}.ph-title b{text-align:center;font-size:13px}.ph-title .ph-camera-link{font-size:16px;margin-left:5px}.ph-nav{height:40px;width:42px;display:grid;place-items:center;border:0;background:transparent;color:#fff;font-size:22px;border-radius:8px}.ph-nav:active{background:#ffffff22}
+.ph-main{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y}
+.ph-main.ph-camera{display:flex;overflow:hidden}.ph-camera .ph-cam canvas{object-fit:contain}
+.ph-main .ph-feed,.ph-main .ph-log,.ph-main .ph-shot{overflow:visible}
+.ph-main .ph-home{display:none}.ph-main .ph-back{min-height:42px;min-width:42px}
+.ph-player{padding:12px;margin:8px 10px;background:#293450;border-radius:14px}
+.ph-player strong,.ph-player small{display:block}.ph-player small{min-height:17px;margin-top:4px;color:#d2d9e6}
+.ph-transport{display:flex;align-items:center;gap:8px;margin-top:8px}
+.ph-transport button{min-height:42px;padding:0 12px;border:1px solid #fff3;border-radius:9px;color:white;background:#ffffff14;font:inherit}
+.ph-transport button:disabled{opacity:.45}
+.ph-radio-list{padding:6px 10px 12px}.ph-radio-list h4{margin:12px 0 7px;color:#e4e9f2;font-size:12px}
+.ph-radio-list .ph-st{display:flex;align-items:center;gap:10px;min-height:46px;text-decoration:none}
+.ph-radio-list .ph-st small{text-align:right;color:#f4c7de;flex:none}
+.ph-radio-list .ph-st[aria-pressed="true"]{background:#443457;border-color:#b989ae}
+#advView.phone-compact .ph{top:8px;bottom:8px;right:8px;width:min(344px,calc(100% - 16px))}
+#advView.phone-compact .ph-top,#advView.phone-compact .ph-main:not(.ph-camera) .ph-hd{display:none}
+#advView.phone-compact .ph-wall{padding:6px;margin:6px 10px;border-radius:12px}
+#advView.phone-compact .ph-av{display:none}
+#advView.phone-compact .ph-big{font-size:20px}
+#advView.phone-compact .ph-grid{padding:6px 10px 12px;gap:6px}
+#advView.phone-compact .ph-app{min-height:54px;justify-content:center}
+#advView.phone-compact .ph-app i{width:34px;height:34px;font-size:17px;border-radius:10px}
+#advView.phone-compact .ph-camtop{padding:4px 8px}
+#advView.phone-compact .ph-lens{bottom:81px}
+#advView.phone-compact .ph-chips{bottom:49px}
+#advView.phone-compact .ph-shut{width:40px;height:40px;bottom:5px;border-width:3px}
+.ph-chips,.ph-lens{touch-action:pan-x}
 .ph-top{display:flex;justify-content:space-between;align-items:center;padding:8px 18px 4px;font-size:11px;font-weight:700;opacity:.9}.ph-notch{width:70px;height:18px;border-radius:12px;background:#000}
 .ph-wall{margin:6px 10px;border-radius:22px;padding:14px;text-align:center;background:linear-gradient(160deg,#5b7db8,#b98fc9 55%,#f2b8a2)}.ph-big{font-size:34px;font-weight:800;letter-spacing:-1px}.ph-sub{font-size:11px;opacity:.9}
 .ph-av{display:flex;justify-content:center;gap:6px;margin-bottom:4px}.ph-a{display:inline-grid;place-items:center;border-radius:50%;background:#ffffff33 center/cover;border:2px solid #fff;font-size:16px;flex:none}
@@ -4379,7 +4409,8 @@ function auUpdate(L){if(!AU.ctx)return;const A=AU.ctx,t=A.currentTime,st=G7;AU.m
   AU.river.g.gain.setTargetAtTime(Math.max(0,1-dd(W7.riverPos)/42)*.32,t,.4);
   let fl=999;for(const f of W7.flagSpots)fl=Math.min(fl,dd(f));AU.flag.g.gain.setTargetAtTime(Math.max(0,1-fl/14)*.05*(.5+ADV.wx.wind),t,.4);
   const fire=(st.fireOn?1:0)*Math.max(0,1-dd(W7.fire)/16);AU.fire.g.gain.setTargetAtTime(fire*(.12+Math.random()*.18),t,.05);
-  const cafe=Math.max(0,1-dd(W7.cafe)/60)*.5,mood=st.act&&/bench|end|maggi/.test(st.act.k)?1:0;const mv=Math.max(cafe,mood)*.09;AU.mus.gain.setTargetAtTime(mv,t,.8);
+  const cafe=Math.max(0,1-dd(W7.cafe)/60)*.5,mood=st.act&&/bench|end|maggi/.test(st.act.k)?1:0;const mv=PH.radioPlaying?0:Math.max(cafe,mood)*.09;AU.mus.gain.setTargetAtTime(mv,t,.8);
+  if(PH.radio>=0){phRadioStep();return}
   if(mv>.005){if(AU.next<t)AU.next=t+.05;while(AU.next<t+.35){const n=MEL[AU.ni%MEL.length];auNote(AU.next,n,.55);if(AU.ni%4===0)auNote(AU.next,n-12,.35,'sine');AU.ni++;AU.next+=.46}}}
 
 /* ---------- state ---------- */
@@ -4822,7 +4853,7 @@ function perfWatch(dt){const p=ADV.perf||(ADV.perf={n:0,sum:0,t:0,bad:0,good:0})
   if(LS.get('adv_gfx','auto')!=='auto')return;
   if(avg>(ADV.cap30?36:22)){p.bad++;p.good=0;if(p.bad>=2){p.bad=0;if(ADV.tier>0){ADV.tier--;advFit()}else if((ADV.scaleMul||1)>.91){ADV.scaleMul=Math.max(.9,(ADV.scaleMul||1)-.08);advFit()}else if(PFX.on&&!PFX.autoOff){PFX.autoOff=true;PFX.on=false}else ADV.cap30=true}}
   else if(avg<15){p.good++;p.bad=0;if(p.good>=4&&ADV.cap30){ADV.cap30=false;p.good=0}}else{p.bad=0}}
-function advFit(){const v=$('#advView');if(!v)return;const W=innerWidth,H=innerHeight,rot=H>W*1.05;v.classList.toggle('rot',rot);const w=rot?H:W,h=rot?W:H;v.classList.toggle('compact',w<680);v.style.width=w+'px';v.style.height=h+'px';
+function advFit(){const v=$('#advView');if(!v)return;const W=innerWidth,H=innerHeight,rot=H>W*1.05;v.classList.toggle('rot',rot);const w=rot?H:W,h=rot?W:H;v.classList.toggle('phone-compact',h<430||w<650);v.classList.toggle('compact',w<680);v.style.width=w+'px';v.style.height=h+'px';
   const cv=$('#advCv');const q=QUAL();const dpr=Math.max(1,Math.min(devicePixelRatio||1,q.scale)*(ADV.scaleMul||1))*Number(LS.get('real_scale',1));cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);cv.style.width=w+'px';cv.style.height=h+'px'}
 function advMenu(html){const m=$('#advMenu');ADV.menu=html?1:null;m.classList.toggle('on',!!html);m.innerHTML=html?`<div class="box">${html}</div>`:'';if(AU.ctx){try{html?AU.ctx.suspend():AU.ctx.resume()}catch(e){}}}
 function optRow(key,opts,cur){return `<div class="adv-opt">${opts.map(([v,l])=>`<button class="chip press ${cur===v?'on':''}" data-o="${key}" data-v="${v}">${T(l)}</button>`).join('')}</div>`}
@@ -4905,7 +4936,7 @@ function cycleCam(){const i=CAM_O.findIndex(c=>c[0]===ADV.opt.cam);ADV.opt.cam=C
   tap('#advJ',()=>{if(G7.drive)horn();else G7.jumpQ=.14});tap('#advSwap',advSwap);tap('#advHand',advHand);tap('#advSnap',()=>takeSelfie(false));tap('#advEmoB',emoMenu);tap('#advCamB',cycleCam);tap('#advAct',()=>doAction(ADV.action));
   addEventListener('blur',()=>{if(G7){G7.keys={};G7.joy=[0,0]}});
   $('#advPause').onclick=()=>{if(G7&&!G7.over)pauseMenu()};
-  addEventListener('keydown',e=>{if(!ADV.on||!G7||e.target.tagName==='INPUT')return;const k=e.key.length===1?e.key.toLowerCase():e.key;G7.keys[k]=true;if(k===' '||k==='j')G7.jumpQ=.14;if(k===' ')e.preventDefault();if(k==='f')advSwap();if(k==='h')advHand();if(k==='c')takeSelfie(true);if(k==='x')doAction(ADV.action);if(k==='v')cycleCam();
+  addEventListener('keydown',e=>{if(!ADV.on||!G7||PH.open||e.target.tagName==='INPUT')return;const k=e.key.length===1?e.key.toLowerCase():e.key;G7.keys[k]=true;if(k===' '||k==='j')G7.jumpQ=.14;if(k===' ')e.preventDefault();if(k==='f')advSwap();if(k==='h')advHand();if(k==='c')takeSelfie(true);if(k==='x')doAction(ADV.action);if(k==='v')cycleCam();
     const em={1:'hug',2:'kiss',3:'heart',4:'wave',5:'dance',6:'ball',7:'snowman'}[k];if(em)emote(em);if(k==='Escape'||k==='p')ADV.menu?advMenu(null):pauseMenu()});
   addEventListener('keyup',e=>{if(!ADV.on||!G7)return;const k=e.key.length===1?e.key.toLowerCase():e.key;G7.keys[k]=false});
   addEventListener('resize',()=>{if(ADV.on)setTimeout(advFit,60)});
@@ -5324,44 +5355,150 @@ const PHL=[['—','none'],['👑','crown'],['💗','hearts'],['❄️','snow'],[
 const RADIO=[['📻 Pahadi Folk',[0,2,4,7,9,7,4,2,0,-3,0,2],.46,'triangle'],['🎸 Lo-fi Love',[0,4,7,11,9,7,4,2],.62,'sine'],['🎻 Kashmir Santoor',[0,1,4,5,7,8,7,5,4,1],.34,'triangle']];
 const phPick=a=>a[LI[SET.uiLang]]??a[2];
 function phAv(w,sz){const a=avOf(w)||{};return `<span class="ph-a" style="width:${sz}px;height:${sz}px;${a.img?`background-image:url(${a.img})`:''}">${a.img?'':(w==='Komal'?'👧':'👦')}</span>`}
-const PH={open:false,scr:'home',sf:true,f:0,l:0,img:null,radio:-1,fr:0};
+const PH={open:false,scr:'home',sf:true,f:0,l:0,img:null,radio:-1,fr:0,track:0,radioPlaying:false};
+const PH_TRACKS=[
+  ['Pangong at Dusk','Soft keys and strings','pangong-at-dusk'],
+  ['A Road for Two','Warm acoustic instrumental','a-road-for-two'],
+  ['Snowlight Waltz','Piano waltz','snowlight-waltz']
+];
+const PH_ONLINE=[
+  ['Saiyaara','Faheem Abdullah · YRF Music','jCVjudmnByk'],
+  ['Barbaad','Jubin Nautiyal · YRF Music','B4LDG_1MnL8',343],
+  ['Tum Ho Toh','Vishal Mishra & Hansika Pareek · YRF Music','rOUuGvJkBrQ'],
+  ['Humsafar','Sachet–Parampara · YRF Music','D9DiMnlpFK8'],
+  ['Dhun','Arijit Singh · YRF Music','cUmUOb7j3dc'],
+  ['Gehra Hua','Arijit Singh · Saregama','GX9x62kFsVU'],
+  ['Mere Hamraaz','Ekram Pradhan · Epriix Music','7OP7ScUi-28']
+];
+const PH_TEXT={
+ phone:TR3('Phone','Phone','फ़ोन'),back:TR3('Back','Back','वापस'),close:TR3('Close','Band karo','बंद करें'),
+ offline:TR3('Offline love instrumentals','Offline love instrumentals','ऑफ़लाइन रोमांटिक धुनें'),
+ online:TR3('Official songs · YouTube','Official songs · YouTube','आधिकारिक गाने · YouTube'),
+ stations:TR3('Instrumental stations','Instrumental stations','इंस्ट्रूमेंटल स्टेशन'),
+ loading:TR3('Loading…','Loading…','लोड हो रहा है…'),playing:TR3('Playing','Chal raha hai','चल रहा है'),
+ paused:TR3('Paused','Ruka hua hai','रुका हुआ है'),error:TR3('Could not play. Tap Play to retry.','Dubara Play dabao.','गाना नहीं चला। फिर से प्ले दबाएँ।'),
+ play:TR3('Play','Play','चलाएँ'),pause:TR3('Pause','Pause','रोकें'),previous:TR3('Previous','Previous','पिछला'),next:TR3('Next','Next','अगला')
+};
+const phText=k=>phPick(PH_TEXT[k]);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&PH.radioPlaying)phRadioStop(false)});
+const phRadio={state:'idle',source:null,offset:0,start:0,ticket:0,buffers:new Map()};
+function phRadioPaint(){
+  if(!PH.open||PH.scr!=='radio')return;
+  const text=$('#phRadioStatus'),toggle=$('#phPlay');
+  if(!text||!toggle)return;
+  $('#phNow').textContent=PH_TRACKS[PH.track][0];
+  text.textContent=phRadio.state==='idle'?PH_TRACKS[PH.track][1]:phText(phRadio.state);
+  toggle.textContent=phText(phRadio.state==='playing'||phRadio.state==='loading'?'pause':'play');
+  $$('#advPhone [data-track]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.track===PH.track&&PH.radio<0)));
+  $$('#advPhone [data-st]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.st===PH.radio&&PH.radio>=0)));
+}
+function phRadioStop(reset=true){
+  ++phRadio.ticket;
+  if(phRadio.source){
+    if(!reset)phRadio.offset+=AU.ctx.currentTime-phRadio.start;
+    phRadio.source.onended=null;phRadio.source.stop();phRadio.source.disconnect();phRadio.volume?.disconnect();phRadio.source=null;
+  }
+  if(reset)phRadio.offset=0;
+  phRadio.state=reset?'idle':'paused';PH.radioPlaying=false;phRadioPaint();
+}
+async function phPlayTrack(i,resume=false){
+  phRadioStop(!resume);
+  PH.track=(i+PH_TRACKS.length)%PH_TRACKS.length;PH.radio=-1;
+  auInit();
+  const ctx=AU.ctx, ticket=phRadio.ticket;
+  if(!ctx){phRadio.state='error';phRadioPaint();return}
+  PH.radioPlaying=true;phRadio.state='loading';phRadioPaint();
+  try{
+    await ctx.resume();
+    const key=PH_TRACKS[PH.track][2];
+    let buffer=phRadio.buffers.get(key);
+    if(!buffer){
+      const response=await fetch('realistic/assets/'+key+'.ogg');
+      if(!response.ok)throw Error('Missing radio track');
+      buffer=await ctx.decodeAudioData(await response.arrayBuffer());
+      phRadio.buffers.set(key,buffer);
+    }
+    if(ticket!==phRadio.ticket)return;
+    const source=ctx.createBufferSource(), volume=ctx.createGain();
+    source.buffer=buffer;volume.gain.value=.42;source.connect(volume);volume.connect(AU.master);
+    source.onended=()=>{
+      source.disconnect();volume.disconnect();
+      if(ticket!==phRadio.ticket)return;
+      phRadio.source=null;phPlayTrack(PH.track+1);
+    };
+    phRadio.source=source;phRadio.volume=volume;phRadio.start=ctx.currentTime;
+    source.start(0,phRadio.offset%buffer.duration);
+    phRadio.state='playing';phRadioPaint();
+  }catch(e){
+    if(ticket!==phRadio.ticket)return;
+    phRadioStop(false);phRadio.state='error';phRadioPaint();
+  }
+}
+function phOpenOfficial(event){
+  phRadioStop();PH.radio=-1;phRadioPaint();
+  if(window.ChinuNative?.openUrl){event.preventDefault();ChinuNative.openUrl(event.currentTarget.href)}
+}
 if(!COL.gram)COL.gram=[];
 /* spend log for the wallet */
 (function(){const _sp=spend;spend=function(n,what){const ok=_sp(n,what);if(ok&&TRIP&&n>0){(TRIP.log=TRIP.log||[]).unshift({n,w:String(what||'💸'),d:TRIP.day,p:PLACE?PLACE.name:'',ts:Date.now()});TRIP.log=TRIP.log.slice(0,40)}return ok}})();
-function phEl(){let e=$('#advPhone');if(e)return e;e=document.createElement('div');e.id='advPhone';e.className='ph';$('#advView').appendChild(e);return e}
+function phEl(){let e=$('#advPhone');if(e)return e;e=document.createElement('div');e.id='advPhone';e.className='ph';
+  const scrim=document.createElement('button');scrim.className='ph-scrim';scrim.id='phScrim';scrim.hidden=true;scrim.setAttribute('aria-label',phText('close'));scrim.onclick=phClose;
+  $('#advView').append(scrim,e);return e}
 function phTime(){return TRIP?clockTxt():new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}
-function phOpen(scr){PH.open=true;sfx('pop');haptic(10);const e=phEl();e.classList.add('on');phGo(scr||'home')}
-function phClose(){PH.open=false;ADV.camOv=null;const e=$('#advPhone');if(e)e.classList.remove('on');const me=G7&&G7.ch[myId()];if(me&&me.pose&&me.pose.k==='selfie')me.pose=null}
-function phGo(scr){PH.scr=scr;if(scr!=='snap')ADV.camOv=null;const e=phEl();const top=`<div class="ph-top"><span>${phTime()}</span><span class="ph-notch"></span><span>📶 🔋</span></div>`;
-  const back=`<button class="ph-back press" data-ph="home">‹</button>`;
+function phOpen(scr){PH.open=true;G7.joy=[0,0];G7.keys={};$('#advView').classList.add('phone-open');sfx('pop');haptic(10);const e=phEl();e.classList.add('on');$('#phScrim').hidden=false;phGo(scr||'home')}
+function phClose(){PH.open=false;ADV.camOv=null;$('#advView').classList.remove('phone-open');const scrim=$('#phScrim');if(scrim)scrim.hidden=true;const e=$('#advPhone');if(e)e.classList.remove('on');const me=G7&&G7.ch[myId()];if(me&&me.pose&&me.pose.k==='selfie')me.pose=null}
+function phGo(scr){PH.scr=scr;if(scr!=='snap')ADV.camOv=null;const e=phEl();
   if(scr==='home'){const apps=[['snap','📸','phSnap','#ffd400'],['gram','🌄','phGram','linear-gradient(135deg,#f9c74f,#f3722c,#b5179e,#7209b7)'],['map','🗺️','phMap','#2a9d8f'],['wallet','💳','phWallet','#264653'],['radio','📻','phRadio','#e76f51'],['chat','💬','phChat','#4361ee']];
-    e.innerHTML=top+`<div class="ph-wall"><div class="ph-av">${phAv('Cheeku',40)}${phAv('Komal',40)}</div><div class="ph-big">${phTime()}</div><div class="ph-sub">${PLACE?PLACE.name:''} · ${ADV.wx&&ADV.wx.temp!=null?ADV.wx.temp+'°C':''}</div></div>
-     <div class="ph-grid">${apps.map(a=>`<button class="ph-app press" data-ph="${a[0]}"><i style="background:${a[3]}">${a[1]}</i><span>${T(a[2])}</span></button>`).join('')}</div><button class="ph-home press" data-ph="close"></button>`}
-  else if(scr==='snap'){e.innerHTML=`<div class="ph-cam"><canvas id="phV" width="270" height="338"></canvas><div class="ph-camtop">${back}<b>${T('phSnap')}</b><button class="ph-flip press" id="phFlip">🔄 ${PH.sf?T('phBack'):T('phSelfie')}</button></div>
+    e.innerHTML=`<div class="ph-wall"><div class="ph-av">${phAv('Cheeku',40)}${phAv('Komal',40)}</div><div class="ph-big">${phTime()}</div><div class="ph-sub">${PLACE?PLACE.name:''} · ${ADV.wx&&ADV.wx.temp!=null?ADV.wx.temp+'°C':''}</div></div>
+     <div class="ph-grid">${apps.map(a=>`<button class="ph-app press" data-ph="${a[0]}"><i style="background:${a[3]}">${a[1]}</i><span>${T(a[2])}</span></button>`).join('')}</div>`}
+  else if(scr==='snap'){e.innerHTML=`<div class="ph-cam"><canvas id="phV" width="270" height="338"></canvas><div class="ph-camtop"><b>${T('phSnap')}</b><button class="ph-flip press" id="phFlip">🔄 ${PH.sf?T('phBack'):T('phSelfie')}</button></div>
      <div class="ph-chips" id="phF">${PHF.map((f,i)=>`<button class="press${i===PH.f?' on':''}" data-f="${i}">${f[0]}</button>`).join('')}</div>
      <div class="ph-lens" id="phL">${PHL.map((l,i)=>`<button class="press${i===PH.l?' on':''}" data-l="${i}">${l[0]}</button>`).join('')}</div><button class="ph-shut press" id="phShut"></button></div>`;
     $('#phFlip').onclick=()=>{PH.sf=!PH.sf;phGo('snap')};$$('#phF [data-f]').forEach(b=>b.onclick=()=>{PH.f=+b.dataset.f;$$('#phF button').forEach(x=>x.classList.toggle('on',x===b))});
     $$('#phL [data-l]').forEach(b=>b.onclick=()=>{PH.l=+b.dataset.l;$$('#phL button').forEach(x=>x.classList.toggle('on',x===b))});$('#phShut').onclick=phShoot;phSelfieCam()}
-  else if(scr==='shot'){e.innerHTML=`<div class="ph-shot">${back.replace('data-ph="home"','data-ph="snap"')}<img src="${PH.img}"><input id="phCap" maxlength="120" placeholder="${T('phCap')}"><div class="ph-acts">
+  else if(scr==='shot'){e.innerHTML=`<div class="ph-shot"><img src="${PH.img}"><input id="phCap" maxlength="120" placeholder="${T('phCap')}"><div class="ph-acts">
      <button class="btn solid press" id="phSend">${T('phSend')}</button><button class="btn solid press" id="phPost">${T('phPost')}</button><button class="btn glass press" id="phSave">${T('phSave')}</button><button class="btn glass press" id="phIg">${T('phInsta')}</button><button class="btn glass press" data-ph="snap">${T('phRetake')}</button></div></div>`;
     $('#phSend').onclick=async()=>{const b=$('#phSend');b.disabled=true;await saveSnap(PH.img,PHF[PH.f][0]);advBanner(T('phSent'),2200);sfx('love');phGo('snap')};
     $('#phPost').onclick=()=>phPost($('#phCap').value);$('#phSave').onclick=()=>{albumAdd(PH.img,PLACE?PLACE.name:'Himachal');advBanner(T('phSaved'),2000);sfx('coin')};$('#phIg').onclick=()=>phShare(PH.img,$('#phCap').value)}
   else if(scr==='gram'){const list=(COL.gram||[]).filter(x=>x.img&&!x.gone).sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,30);
-    e.innerHTML=top+`<div class="ph-hd">${back}<b class="ph-logo">Chinugram</b><button class="ph-back press" data-ph="snap">📸</button></div><div class="ph-feed">${list.length?list.map(x=>{const lk=x.likes||[];const me=lk.includes(S.me);
+    e.innerHTML=`<div class="ph-feed">${list.length?list.map(x=>{const lk=x.likes||[];const me=lk.includes(S.me);
       return `<div class="ph-post"><div class="ph-ph">${phAv(x.by,26)}<b>${esc(NAME(x.by))}</b><span>${esc(x.place||'')}</span></div><img src="${x.img}" data-dbl="${x.id}"><div class="ph-pa"><button class="press${me?' on':''}" data-like="${x.id}">${me?'❤️':'🤍'} ${lk.length||''}</button><button class="press" data-ig="${x.id}">📤</button><small>${new Date(x.ts).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</small></div>${x.cap?`<p><b>${esc(NAME(x.by))}</b> ${esc(x.cap)}</p>`:''}</div>`}).join(''):`<div class="ph-empty">${T('phEmpty')}</div>`}</div>`;
     const like=id=>{const x=(COL.gram||[]).find(i=>String(i.id)===String(id));if(!x)return;let lk=(x.likes||[]).slice();const had=lk.includes(S.me);lk=had?lk.filter(w=>w!==S.me):lk.concat(S.me);x.likes=lk;putDoc('gram',x.id,{...x,id:undefined,likes:lk});if(!had){haptic(15);sfx('love');if(x.by!==S.me)emit({t:'gram',a:'like'})}phGo('gram')};
     $$('[data-like]').forEach(b=>b.onclick=()=>like(b.dataset.like));$$('[data-dbl]').forEach(im=>im.ondblclick=()=>like(im.dataset.dbl));$$('[data-ig]').forEach(b=>b.onclick=()=>{const x=(COL.gram||[]).find(i=>String(i.id)===b.dataset.ig);if(x)phShare(x.img,x.cap)})}
   else if(scr==='wallet'){const log=(TRIP&&TRIP.log)||[];const tot=log.reduce((s,x)=>s+x.n,0);
-    e.innerHTML=top+`<div class="ph-hd">${back}<b>💳 ${T('phWallet')}</b><span></span></div><div class="ph-card"><small>${T('phBal')}</small><b>${rupee(TRIP?TRIP.money:0)}</b><small>${T('phToday')}: ${rupee(tot)} · Day ${TRIP?TRIP.day:1}</small></div>
+    e.innerHTML=`<div class="ph-card"><small>${T('phBal')}</small><b>${rupee(TRIP?TRIP.money:0)}</b><small>${T('phToday')}: ${rupee(tot)} · Day ${TRIP?TRIP.day:1}</small></div>
      <div class="ph-log">${log.length?log.map(x=>`<div><span>${esc(x.w)}</span><small>Day ${x.d} · ${esc(x.p||'')}</small><b>−${rupee(x.n)}</b></div>`).join(''):`<div class="ph-empty">${T('phNoLog')}</div>`}</div>`}
-  else if(scr==='radio'){e.innerHTML=top+`<div class="ph-hd">${back}<b>📻 ${T('phRadio')}</b><span></span></div><div class="ph-log">${RADIO.map((r,i)=>`<button class="ph-st press${PH.radio===i?' on':''}" data-st="${i}">${r[0]}<small>${PH.radio===i?'▶︎ live':''}</small></button>`).join('')}<button class="ph-st press" data-st="-1">⏹ ${T('phOff')}</button></div>`;
-    $$('[data-st]').forEach(b=>b.onclick=()=>{PH.radio=+b.dataset.st;AU.ni=0;phGo('radio')})}
+  else if(scr==='radio'){
+    e.innerHTML=`<div class="ph-player"><strong id="phNow"></strong><small id="phRadioStatus" aria-live="polite"></small>
+      <div class="ph-transport"><button id="phPrev" aria-label="${phText('previous')}">‹</button><button id="phPlay" type="button">${phText('play')}</button><button id="phNext" aria-label="${phText('next')}">›</button></div></div>
+      <div class="ph-radio-list"><h4>${phText('offline')}</h4>${PH_TRACKS.map(([title],i)=>`<button class="ph-st" data-track="${i}">${title}<small>▶</small></button>`).join('')}
+      <h4>${phText('online')}</h4>${PH_ONLINE.map(([title,credit,id,start])=>`<a class="ph-st" data-official href="https://www.youtube.com/watch?v=${id}${start?'&amp;t='+start+'s':''}" target="_blank" rel="noopener noreferrer"><span>${title}<br><small>${credit}</small></span><small>↗</small></a>`).join('')}
+      <h4>${phText('stations')}</h4>${RADIO.map((r,i)=>`<button class="ph-st" data-st="${i}">${r[0]}</button>`).join('')}<button class="ph-st" data-st="-1">${T('phOff')}</button></div>`;
+  }
   else if(scr==='chat'){const lines=phPick(TR3(['Chalo chai peete hain ☕','Selfie lete hain? 📸','Love you 💗','Race karein? 🏁','Thand lag rahi hai 🥶','Wow kya view hai 😍'],['Chalo chai peete hain ☕','Selfie lete hain? 📸','Love you 💗','Race karein? 🏁','Thand lag rahi hai 🥶','Wow kya view hai 😍'],['चलो चाय पीते हैं ☕','सेल्फी लेते हैं? 📸','लव यू 💗','रेस करें? 🏁','ठंड लग रही है 🥶','वाह क्या व्यू है 😍']));
-    e.innerHTML=top+`<div class="ph-hd">${back}<b>💬 ${esc(NAME(pId(myId())))}</b><span></span></div><div class="ph-log">${lines.map(l=>`<button class="ph-st press" data-say="${esc(l)}">${esc(l)}</button>`).join('')}</div>`;
+    e.innerHTML=`<div class="ph-log">${lines.map(l=>`<button class="ph-st press" data-say="${esc(l)}">${esc(l)}</button>`).join('')}</div>`;
     $$('[data-say]').forEach(b=>b.onclick=()=>{const t=b.dataset.say;advSay(myId(),t);if(liveOn())liveSend({e:'say',text:t});else setTimeout(()=>advSay(pId(myId()),phPick(TR3('Yes, let’s go! 💗','Haan chalo! 💗','हाँ चलो! 💗'))),1400);sfx('pop');phClose()})}
   else if(scr==='map'){phClose();openMap(true);return}
   else if(scr==='close'){phClose();return}
-  $$('#advPhone [data-ph]').forEach(b=>b.onclick=()=>phGo(b.dataset.ph))}
+  const main=document.createElement('div');main.className='ph-main'+(scr==='snap'?' ph-camera':'');
+  while(e.firstChild)main.appendChild(e.firstChild);
+  const header=document.createElement('div');header.className='ph-title';
+  const title={snap:'phSnap',gram:'phGram',wallet:'phWallet',radio:'phRadio',chat:'phChat',shot:'phSnap'}[scr];
+  header.innerHTML=`<button class="ph-nav" aria-label="${phText('back')}" data-ph="${scr==='shot'?'snap':scr==='home'?'close':'home'}">‹</button><div class="ph-title-label"><b>${scr==='chat'?esc(NAME(pId(myId()))):title?T(title):phText('phone')}</b>${scr==='gram'?'<button class="ph-nav ph-camera-link" data-ph="snap" aria-label="Open camera">📸</button>':''}</div><button class="ph-nav" aria-label="${phText('close')}" data-ph="close">×</button>`;
+  e.append(header,main);
+  $$('#advPhone [data-ph]').forEach(b=>b.onclick=()=>phGo(b.dataset.ph));
+  if(scr==='radio'){
+    $('#phPlay').onclick=()=>phRadio.state==='playing'||phRadio.state==='loading'?phRadioStop(false):phPlayTrack(PH.track,true);
+    $('#phPrev').onclick=()=>phPlayTrack(PH.track-1);$('#phNext').onclick=()=>phPlayTrack(PH.track+1);
+    $$('#advPhone [data-track]').forEach(b=>b.onclick=()=>phPlayTrack(+b.dataset.track));
+    $$('#advPhone [data-official]').forEach(a=>a.onclick=phOpenOfficial);
+    $$('#advPhone [data-st]').forEach(b=>b.onclick=()=>{
+      phRadioStop();PH.radio=+b.dataset.st;auInit();
+      AU.ni=0;AU.next=0;if(AU.ctx)AU.ctx.resume().catch(()=>{});phRadioPaint();
+    });
+    phRadioPaint();
+  }
+}
 function phSelfieCam(){const st=G7;if(!st)return;const me=st.ch[myId()],pt=st.ch[pId(myId())];if(PH.scr!=='snap'||!PH.open){ADV.camOv=null;return}
   if(!PH.sf){ADV.camOv=null;if(me.pose&&me.pose.k==='selfie')me.pose=null;return}
   let near=Math.hypot(me.x-pt.x,me.z-pt.z)<4;if(near&&!liveOn()&&!st.act&&!st.drive&&me.spd<.3){const rx=Math.cos(me.yaw),rz=-Math.sin(me.yaw);pt.x=lerp(pt.x,me.x+rx*.85,.15);pt.z=lerp(pt.z,me.z+rz*.85,.15);pt.y=terrainH(pt.x,pt.z);pt.yaw=me.yaw;pt.i=null}const mx=near?(me.x+pt.x)/2:me.x,mz=near?(me.z+pt.z)/2:me.z,my=near?Math.max(me.y,pt.y):me.y;const yw=me.yaw;
@@ -5395,13 +5532,14 @@ function phShare(img,cap){const txt=(cap?cap+' ':'')+`#Himachal #${(PLACE&&PLACE
 /* radio plays through the game audio graph */
 function phRadioStep(){if(!AU.ctx||PH.radio<0||!AU.mus)return;const r=RADIO[PH.radio],t=AU.ctx.currentTime;AU.mus.gain.setTargetAtTime(.1,t,.3);if(AU.next<t)AU.next=t+.05;
   while(AU.next<t+.35){const n=r[1][AU.ni%r[1].length];auNote(AU.next,n,.5,r[3]);if(AU.ni%4===0)auNote(AU.next,n-12,.3,'sine');AU.ni++;AU.next+=r[2]}}
-(function(){const _au=auStep;auStep=function(){_au.apply(this,arguments);try{phRadioStep()}catch(e){}}})();
+
 /* partner notifications */
 (function(){const nn=window.__natNotif;if(nn)window.__natNotif=function(d){if(d&&d.t==='gram'){const n=NAME(S.me);const t=T(d.a==='like'?'phLikeN':'phGramN',{n});return {_n:t,_s:t.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,'').trim(),_t:`${EM[S.me]||'💗'} ${n}`,_k:'',_e:d.a==='like'?'❤️':'🌄',_o:'adv'}}return nn(d)}})();
 (function(){const _ss=startShared;startShared=function(){_ss();liveCol('gram',()=>{if(PH.open&&PH.scr==='gram')phGo('gram')})}})();
 (function(){const b=$('#advPhB');if(b)b.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();if(!G7)return;PH.open?phClose():phOpen()});
+  addEventListener('keydown',e=>{if(PH.open&&e.key==='Escape')phClose()});
   const e=phEl();['pointerdown','touchstart','mousedown','wheel'].forEach(k=>e.addEventListener(k,ev=>ev.stopPropagation(),{passive:true}));
-  const _c=advClose;advClose=function(){phClose();return _c.apply(this,arguments)}})();
+  const _c=advClose;advClose=function(){phClose();phRadioStop();PH.radio=-1;return _c.apply(this,arguments)}})();
 /* ================= 🛣️ connected roads: drive or walk off the end of one place straight into the next (GTA style) ================= */
 Object.assign(STR,{
  rdTo:TR3('Road to {p}','{p} ki sadak','{p} की सड़क'),rdOn:TR3('🛣️ On the road to {p} · {k} km','🛣️ {p} ki taraf · {k} km','🛣️ {p} की तरफ · {k} km'),
