@@ -1,16 +1,20 @@
 # Chinu v5 — this ONE file builds the whole Android app (APK) on GitHub.
 # Put it in your repo as:  .github/workflows/build.yml
 # Put chinu-ui.html in the repo ROOT (next to README). That file is the app's look & features.
-#   • Change only chinu-ui.html  → both phones update by themselves (no new APK, no uninstall)
-#   • Change this build.yml      → a new APK; it installs straight over the old one (same signing key)
+# Every build uploads an APK artifact. Publishing requires manual dispatch on main with publish_production selected.
 name: Build APK
 
 on:
   push:
   workflow_dispatch:
+    inputs:
+      publish_production:
+        description: Publish the production release and activate auto-update
+        type: boolean
+        default: false
 
 permissions:
-  contents: write
+  contents: read
 
 # two quick pushes → only the newest one builds (saves time, no half-finished duplicate releases)
 concurrency:
@@ -20,6 +24,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      native_version: ${{ steps.native.outputs.version }}
     steps:
       - uses: actions/checkout@v6
 
@@ -2555,7 +2561,11 @@ jobs:
           rv6RhbkVNSlhX28vIgsRL5wVL10AAOzNWo0I2/o+AAHD7w2A8EcaHvYRscRn+wIAAAAABFla
           EOF_CHINU_B64
           mkdir -p chinu && tar -xJf /tmp/chinu.txz -C chinu
-          echo "CHINU_NATIVE=d1527281b85b" >> $GITHUB_ENV
+          NATIVE_VERSION=a6bb23b647e1
+          echo "CHINU_NATIVE=$NATIVE_VERSION" >> "$GITHUB_ENV"
+
+      - id: native
+        run: echo "version=$CHINU_NATIVE" >> "$GITHUB_OUTPUT"
 
       - name: Add the app screens (chinu-ui.html)
         run: |
@@ -2564,6 +2574,16 @@ jobs:
           mkdir -p chinu/app/src/main/assets/www
           cp "$UI" chinu/app/src/main/assets/www/index.html
           cp "$UI" chinu-ui.html 2>/dev/null || true
+          if [ -d realistic ]; then
+            mkdir -p chinu/app/src/main/assets/www/realistic
+            cp realistic/runtime.js chinu/app/src/main/assets/www/realistic/
+            cp -r realistic/assets chinu/app/src/main/assets/www/realistic/
+            if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+              python3 tools/android-assets.py chinu
+            else
+              python3 tools/android-assets.py chinu --preview
+            fi
+          fi
           ls -la chinu/app/src/main/assets/www
 
       - name: Birthday photos & song (optional bday/ folder or bday.zip)
@@ -2602,11 +2622,10 @@ jobs:
 
       - name: Build APK
         working-directory: chinu
-        env:
-          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         run: |
           set -o pipefail
-          if [ -z "$GEMINI_KEY" ]; then echo "::warning::GEMINI_KEY secret is empty — the AI will ask for a key inside the app"; fi
+          # Gemini uses the existing per-device key setting. Never compile a shared secret into the APK.
+          unset GEMINI_KEY
           gradle assembleDebug --no-daemon 2>&1 | tee ../build.log
           cp app/build/outputs/apk/debug/app-debug.apk ../Chinu.apk
 
@@ -2615,13 +2634,12 @@ jobs:
         run: |
           touch build.log
           grep -E "^e: |error:|What went wrong|Could not|FAILED|Exception" build.log | head -40 | sed 's/%/%25/g' | while IFS= read -r line; do echo "::error::$line"; done || true
-          git config user.name "chinu-bot"
-          git config user.email "chinu-bot@users.noreply.github.com"
-          git checkout --orphan build-log
-          git reset -q
-          git add -f build.log
-          git commit -q -m "build log #${{ github.run_number }}"
-          git push -f origin build-log
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: Chinu-build-log
+          path: build.log
 
       - uses: actions/upload-artifact@v6
         with:
@@ -2629,6 +2647,17 @@ jobs:
           path: Chinu.apk
           retention-days: 14
 
+  publish:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.publish_production
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v7
+        with:
+          name: Chinu-apk
       - name: Publish download link + auto-update (Releases)
         uses: softprops/action-gh-release@v3
         with:
@@ -2637,7 +2666,7 @@ jobs:
           make_latest: true
           body: |
             💖 Chinu v5.${{ github.run_number }} — download Chinu.apk below and install (it updates over the old app, nothing is deleted).
-            native:${{ env.CHINU_NATIVE }}
+            native:${{ needs.build.outputs.native_version }}
           files: |
             Chinu.apk
             chinu-ui.html

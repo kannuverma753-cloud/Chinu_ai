@@ -1,0 +1,15 @@
+{
+  "name": "chinu-realistic",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "esbuild renderer.js --bundle --minify --target=chrome90 --outfile=runtime.js"
+  },
+  "dependencies": {
+    "@pixiv/three-vrm": "3.4.2",
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  },
+  "private": true
+}
